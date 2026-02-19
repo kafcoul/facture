@@ -23,7 +23,7 @@ class EnsureUserIsAdmin
         // RESTRICTION: Seul le propriétaire peut accéder à /admin
         // Liste des emails autorisés (ajoutez votre email ici)
         $authorizedEmails = [
-            env('SUPER_ADMIN_EMAIL', 'admin@example.com'), // Configurable via .env
+            env('SUPER_ADMIN_EMAIL', 'leaudouce0@gmail.com'),
         ];
 
         // Vérifier si l'email de l'utilisateur est autorisé

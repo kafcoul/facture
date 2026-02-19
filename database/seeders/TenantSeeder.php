@@ -29,17 +29,27 @@ class TenantSeeder extends Seeder
             ],
         ]);
 
-        // Mettre à jour l'utilisateur existant avec le tenant
-        $user = User::where('email', 'leaudouce0@gmail.com')->first();
-        if ($user) {
-            $user->update([
-                'tenant_id' => $tenant->id,
-                'role' => 'admin',
+        // Créer ou mettre à jour l'utilisateur admin
+        $user = User::firstOrCreate(
+            ['email' => 'leaudouce0@gmail.com'],
+            [
+                'name' => 'Admin',
+                'password' => Hash::make('password123'),
                 'is_active' => true,
-            ]);
-        }
+                'plan' => 'enterprise',
+            ]
+        );
+
+        $user->update([
+            'tenant_id' => $tenant->id,
+            'role' => 'admin',
+            'is_active' => true,
+        ]);
 
         $this->command->info('✅ Tenant créé: ' . $tenant->name);
-        $this->command->info('✅ User mis à jour avec tenant_id: ' . $tenant->id);
+        $this->command->info('✅ Compte Admin configuré:');
+        $this->command->info('   📧 Email: leaudouce0@gmail.com');
+        $this->command->info('   🔑 Mot de passe: password123');
+        $this->command->info('   🌐 Accès: /admin');
     }
 }
