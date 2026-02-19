@@ -1,0 +1,336 @@
+<?php
+
+return [
+    /*
+    |--------------------------------------------------------------------------
+    | Sentry DSN (Data Source Name)
+    |--------------------------------------------------------------------------
+    |
+    | The DSN tells the SDK where to send the events to. Get yours from the
+    | Sentry web interface. Leave it empty to disable error tracking.
+    |
+    */
+    'dsn' => env('SENTRY_LARAVEL_DSN', env('SENTRY_DSN')),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Breadcrumbs
+    |--------------------------------------------------------------------------
+    |
+    | These are data tracking points that help you understand how an error
+    | occurred. Think of them as your application's event log.
+    |
+    */
+    'breadcrumbs' => [
+        // Capture SQL queries as breadcrumbs
+        'sql_queries' => env('SENTRY_BREADCRUMBS_SQL_QUERIES_ENABLED', true),
+
+        // Capture SQL bindings (parameters) in queries
+        'sql_bindings' => env('SENTRY_BREADCRUMBS_SQL_BINDINGS_ENABLED', false),
+
+        // Capture queue job information
+        'queue_info' => env('SENTRY_BREADCRUMBS_QUEUE_INFO_ENABLED', true),
+
+        // Capture command information
+        'command_info' => env('SENTRY_BREADCRUMBS_COMMAND_JOBS_ENABLED', true),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Performance Monitoring
+    |--------------------------------------------------------------------------
+    |
+    | Sentry's performance monitoring helps you see the whole picture of what
+    | your application is doing, how quickly it's doing it, and where it's
+    | spending its time.
+    |
+    */
+    // Sample rate for performance traces (0.0 to 1.0)
+    // 0.2 = 20% of requests will be traced
+    'traces_sample_rate' => env('SENTRY_TRACES_SAMPLE_RATE', 0.0),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Profiles Monitoring
+    |--------------------------------------------------------------------------
+    |
+    | Profiling samples the stack trace of your application's code and sends
+    | that information to Sentry. It helps identify performance bottlenecks.
+    |
+    */
+    'profiles_sample_rate' => env('SENTRY_PROFILES_SAMPLE_RATE', 0.0),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Environment
+    |--------------------------------------------------------------------------
+    |
+    | Set the environment. This allows you to filter errors by environment
+    | in the Sentry dashboard.
+    |
+    */
+    'environment' => env('SENTRY_ENVIRONMENT', env('APP_ENV', 'production')),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Release
+    |--------------------------------------------------------------------------
+    |
+    | Track which version of your application has an error. Useful for seeing
+    | if a specific deployment introduced bugs.
+    |
+    */
+    'release' => env('SENTRY_RELEASE'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Server Name
+    |--------------------------------------------------------------------------
+    |
+    | The server name to be reported to Sentry.
+    |
+    */
+    'server_name' => env('SENTRY_SERVER_NAME', gethostname()),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Send Default PII
+    |--------------------------------------------------------------------------
+    |
+    | If this is enabled, certain personally identifiable information (PII)
+    | is added by active integrations. Without this flag, they are respecting
+    | the no-PII policy and only capture what is necessary.
+    |
+    */
+    'send_default_pii' => env('SENTRY_SEND_DEFAULT_PII', false),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Traces Sampler
+    |--------------------------------------------------------------------------
+    |
+    | Control the sample rate dynamically based on the request.
+    |
+    */
+    'traces_sampler' => null,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Profiles Sampler
+    |--------------------------------------------------------------------------
+    |
+    | Control the profile sample rate dynamically.
+    |
+    */
+    // 'profiles_sampler' => null, // Option obsolete - removed
+
+    /*
+    |--------------------------------------------------------------------------
+    | Before Send
+    |--------------------------------------------------------------------------
+    |
+    | This callback is called before an event is sent to Sentry.
+    | You can modify the event or return null to not send it.
+    |
+    */
+    'before_send' => null,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Before Send Transaction
+    |--------------------------------------------------------------------------
+    |
+    | This callback is called before a transaction is sent to Sentry.
+    |
+    */
+    'before_send_transaction' => null,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Before Breadcrumb
+    |--------------------------------------------------------------------------
+    |
+    | This callback is called before a breadcrumb is recorded.
+    |
+    */
+    'before_breadcrumb' => null,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Integrations
+    |--------------------------------------------------------------------------
+    |
+    | Configure which integrations are enabled.
+    |
+    */
+    'integrations' => [
+        // Capture unhandled errors
+        'error' => env('SENTRY_INTEGRATION_ERROR_ENABLED', true),
+        
+        // Capture fatal errors
+        'fatal_error' => env('SENTRY_INTEGRATION_FATAL_ERROR_ENABLED', true),
+        
+        // Request integration
+        'request' => env('SENTRY_INTEGRATION_REQUEST_ENABLED', true),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Ignored Exceptions
+    |--------------------------------------------------------------------------
+    |
+    | These exceptions will not be reported to Sentry.
+    |
+    */
+    'ignore_exceptions' => [
+        // Laravel default exceptions to ignore
+        Illuminate\Auth\AuthenticationException::class,
+        Illuminate\Auth\Access\AuthorizationException::class,
+        Symfony\Component\HttpKernel\Exception\HttpException::class,
+        Illuminate\Database\Eloquent\ModelNotFoundException::class,
+        Illuminate\Validation\ValidationException::class,
+        Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Ignored Transactions
+    |--------------------------------------------------------------------------
+    |
+    | These transactions will not be sent to Sentry for performance monitoring.
+    |
+    */
+    'ignore_transactions' => [
+        // Example: ignore health check endpoints
+        // '/api/health',
+        // '/api/ping',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Context
+    |--------------------------------------------------------------------------
+    |
+    | Additional context to send with every event.
+    |
+    */
+    'context_lines' => 5,
+
+    /*
+    |--------------------------------------------------------------------------
+    | In App Exclude
+    |--------------------------------------------------------------------------
+    |
+    | List of path prefixes that should not be considered part of your app.
+    |
+    */
+    'in_app_exclude' => [
+        base_path('vendor'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | In App Include
+    |--------------------------------------------------------------------------
+    |
+    | List of path prefixes that should be considered part of your app.
+    |
+    */
+    'in_app_include' => [
+        base_path('app'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Prefixes
+    |--------------------------------------------------------------------------
+    |
+    | Strip these prefixes from file paths in stack traces.
+    |
+    */
+    'prefixes' => [
+        base_path() => 'app://',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Sample Rate
+    |--------------------------------------------------------------------------
+    |
+    | The sample rate for error events (0.0 to 1.0).
+    | 1.0 = 100% of errors will be sent.
+    |
+    */
+    'sample_rate' => (float) env('SENTRY_SAMPLE_RATE', 1.0),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Max Breadcrumbs
+    |--------------------------------------------------------------------------
+    |
+    | Maximum number of breadcrumbs to store.
+    |
+    */
+    'max_breadcrumbs' => env('SENTRY_MAX_BREADCRUMBS', 50),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Attach Stacktrace
+    |--------------------------------------------------------------------------
+    |
+    | Whether to attach stack traces to messages.
+    |
+    */
+    'attach_stacktrace' => env('SENTRY_ATTACH_STACKTRACE', true),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Max Request Body Size
+    |--------------------------------------------------------------------------
+    |
+    | Controls how much of the request body should be included in events.
+    | Options: 'never', 'small', 'medium', 'always'
+    |
+    */
+    'max_request_body_size' => env('SENTRY_MAX_REQUEST_BODY_SIZE', 'medium'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | HTTP Proxy
+    |--------------------------------------------------------------------------
+    |
+    | Configure a proxy for outgoing Sentry requests.
+    |
+    */
+    'http_proxy' => env('SENTRY_HTTP_PROXY'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | HTTP Connect Timeout
+    |--------------------------------------------------------------------------
+    |
+    | Timeout in seconds for connecting to Sentry.
+    |
+    */
+    'http_connect_timeout' => env('SENTRY_HTTP_CONNECT_TIMEOUT', 2),
+
+    /*
+    |--------------------------------------------------------------------------
+    | HTTP Timeout
+    |--------------------------------------------------------------------------
+    |
+    | Timeout in seconds for sending data to Sentry.
+    |
+    */
+    'http_timeout' => env('SENTRY_HTTP_TIMEOUT', 2),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Capture Failed Jobs
+    |--------------------------------------------------------------------------
+    |
+    | Whether to capture failed queue jobs.
+    |
+    */
+    // 'capture_failed_jobs' => env('SENTRY_CAPTURE_FAILED_JOBS', true), // Option obsolete - removed
+];

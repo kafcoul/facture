@@ -1,0 +1,94 @@
+
+
+[1;37;40mCode Coverage Report:        [0m
+[1;37;40m  2026-02-19 15:57:01        [0m
+[1;37;40m                             [0m
+[1;37;40m Summary:                    [0m
+[37;41m  Classes:  7.94% (10/126)   [0m
+[37;41m  Methods: 21.95% (124/565)  [0m
+[37;41m  Lines:   16.46% (1050/6381)[0m
+
+App\Console\Kernel
+  [37;41mMethods:  50.00% ( 1/ 2)[0m   [30;43mLines:  66.67% (  2/  3)[0m
+App\Domain\Client\Models\Client
+  [30;42mMethods: 100.00% ( 7/ 7)[0m   [30;42mLines: 100.00% (  9/  9)[0m
+App\Domain\Invoice\Models\Invoice
+  [37;41mMethods:  46.67% ( 7/15)[0m   [37;41mLines:  50.00% ( 13/ 26)[0m
+App\Domain\Payment\Models\Payment
+  [37;41mMethods:  33.33% ( 3/ 9)[0m   [30;43mLines:  62.50% ( 10/ 16)[0m
+App\Domain\Tenant\Models\Tenant
+  [37;41mMethods:  14.29% ( 1/ 7)[0m   [37;41mLines:  13.33% (  2/ 15)[0m
+App\Exceptions\Handler
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% (  2/  2)[0m
+App\Filament\Resources\ClientResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [37;41mLines:   5.10% (  8/157)[0m
+App\Filament\Resources\InvoiceResource
+  [37;41mMethods:  28.57% ( 2/ 7)[0m   [37;41mLines:   2.62% (  8/305)[0m
+App\Filament\Resources\PaymentResource
+  [37;41mMethods:  28.57% ( 2/ 7)[0m   [37;41mLines:   3.21% (  8/249)[0m
+App\Filament\Resources\ProductResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [37;41mLines:   7.41% (  8/108)[0m
+App\Filament\Resources\TeamInvitationResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [37;41mLines:   5.06% (  8/158)[0m
+App\Filament\Resources\TenantResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [37;41mLines:   6.56% (  8/122)[0m
+App\Filament\Resources\UserResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [37;41mLines:   4.06% (  8/197)[0m
+App\Http\Controllers\Api\AuthController
+  [37;41mMethods:  50.00% ( 4/ 8)[0m   [30;43mLines:  82.81% (106/128)[0m
+App\Http\Controllers\Api\InvoiceApiController
+  [37;41mMethods:  44.44% ( 4/ 9)[0m   [30;43mLines:  72.46% (100/138)[0m
+App\Http\Controllers\Auth\LoginController
+  [30;43mMethods:  66.67% ( 2/ 3)[0m   [30;43mLines:  84.00% ( 21/ 25)[0m
+App\Http\Controllers\Auth\RegisterWithPlanController
+  [30;42mMethods: 100.00% ( 2/ 2)[0m   [30;42mLines: 100.00% ( 42/ 42)[0m
+App\Http\Controllers\Dashboard\BillingController
+  [37;41mMethods:  40.00% ( 2/ 5)[0m   [30;43mLines:  85.16% (109/128)[0m
+App\Http\Controllers\Dashboard\ClientController
+  [37;41mMethods:   0.00% ( 0/ 7)[0m   [37;41mLines:  11.69% (  9/ 77)[0m
+App\Http\Controllers\Dashboard\InvoiceController
+  [37;41mMethods:  50.00% ( 7/14)[0m   [37;41mLines:  47.69% (103/216)[0m
+App\Http\Controllers\Dashboard\TeamController
+  [37;41mMethods:   0.00% ( 0/ 6)[0m   [37;41mLines:  23.23% ( 23/ 99)[0m
+App\Http\Controllers\ExportController
+  [30;42mMethods: 100.00% ( 5/ 5)[0m   [30;42mLines: 100.00% (155/155)[0m
+App\Http\Controllers\StripeWebhookController
+  [37;41mMethods:  50.00% ( 3/ 6)[0m   [30;43mLines:  76.92% ( 60/ 78)[0m
+App\Infrastructure\Traits\BelongsToTenant
+  [37;41mMethods:   0.00% ( 0/ 4)[0m   [30;43mLines:  63.64% (  7/ 11)[0m
+App\Jobs\SendInvoiceEmailJob
+  [37;41mMethods:  33.33% ( 1/ 3)[0m   [37;41mLines:   3.23% (  1/ 31)[0m
+App\Models\Product
+  [37;41mMethods:  50.00% ( 2/ 4)[0m   [37;41mLines:  50.00% (  2/  4)[0m
+App\Models\TeamInvitation
+  [37;41mMethods:   8.33% ( 1/12)[0m   [37;41mLines:  15.62% (  5/ 32)[0m
+App\Models\User
+  [37;41mMethods:  28.57% ( 2/ 7)[0m   [37;41mLines:  15.38% (  2/ 13)[0m
+App\Models\WebhookLog
+  [30;42mMethods: 100.00% ( 3/ 3)[0m   [30;42mLines: 100.00% (  9/  9)[0m
+App\Notifications\InvoiceCreatedNotification
+  [30;42mMethods: 100.00% ( 4/ 4)[0m   [30;42mLines: 100.00% ( 25/ 25)[0m
+App\Notifications\InvoiceOverdueNotification
+  [30;42mMethods: 100.00% ( 4/ 4)[0m   [30;42mLines: 100.00% ( 30/ 30)[0m
+App\Notifications\InvoiceSentToClientNotification
+  [30;43mMethods:  66.67% ( 2/ 3)[0m   [30;42mLines:  95.24% ( 20/ 21)[0m
+App\Notifications\PaymentReceivedNotification
+  [30;43mMethods:  60.00% ( 3/ 5)[0m   [37;41mLines:  27.27% ( 12/ 44)[0m
+App\Notifications\WelcomeNotification
+  [30;42mMethods: 100.00% ( 4/ 4)[0m   [30;42mLines: 100.00% ( 30/ 30)[0m
+App\Policies\ClientPolicy
+  [30;43mMethods:  85.71% ( 6/ 7)[0m   [30;43mLines:  85.71% (  6/  7)[0m
+App\Policies\InvoicePolicy
+  [30;43mMethods:  80.00% ( 8/10)[0m   [30;43mLines:  84.62% ( 11/ 13)[0m
+App\Policies\PaymentPolicy
+  [37;41mMethods:  28.57% ( 2/ 7)[0m   [37;41mLines:  28.57% (  2/  7)[0m
+App\Policies\ProductPolicy
+  [37;41mMethods:  28.57% ( 2/ 7)[0m   [37;41mLines:  33.33% (  4/ 12)[0m
+App\Services\CsvExportService
+  [37;41mMethods:   0.00% ( 0/ 1)[0m   [30;43mLines:  86.36% ( 19/ 22)[0m
+App\Services\InvoiceCalculatorService
+  [30;43mMethods:  71.43% ( 5/ 7)[0m   [37;41mLines:  25.00% ( 10/ 40)[0m
+App\Services\InvoiceNumberService
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% (  6/  6)[0m
+App\Services\PlanService
+  [30;42mMethods: 100.00% (11/11)[0m   [30;42mLines: 100.00% ( 27/ 27)[0m
