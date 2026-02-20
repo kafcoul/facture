@@ -199,4 +199,45 @@ class InvoiceTest extends TestCase
             $this->assertEquals($status, $invoice->fresh()->status);
         }
     }
+
+    // ─── Accessor (Fix 11) ─────────────────────────────
+
+    /** @test */
+    public function invoice_number_accessor_returns_number_field()
+    {
+        $invoice = Invoice::create([
+            'tenant_id' => 1,
+            'user_id' => $this->user->id,
+            'client_id' => $this->client->id,
+            'number' => 'INV-2026-042',
+            'due_date' => now()->addDays(30),
+            'subtotal' => 50000,
+            'tax' => 9000,
+            'total' => 59000,
+            'status' => 'draft',
+        ]);
+
+        $this->assertEquals('INV-2026-042', $invoice->invoice_number);
+        $this->assertEquals($invoice->number, $invoice->invoice_number);
+    }
+
+    /** @test */
+    public function invoice_number_is_appended_to_array()
+    {
+        $invoice = Invoice::create([
+            'tenant_id' => 1,
+            'user_id' => $this->user->id,
+            'client_id' => $this->client->id,
+            'number' => 'INV-APPEND-001',
+            'due_date' => now()->addDays(30),
+            'subtotal' => 10000,
+            'tax' => 0,
+            'total' => 10000,
+            'status' => 'draft',
+        ]);
+
+        $array = $invoice->toArray();
+        $this->assertArrayHasKey('invoice_number', $array);
+        $this->assertEquals('INV-APPEND-001', $array['invoice_number']);
+    }
 }
