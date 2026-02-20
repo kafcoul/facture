@@ -117,6 +117,30 @@ Route::middleware(['auth', 'verified', 'client'])->prefix('client')->name('clien
     Route::middleware(['plan:pro,enterprise'])->group(function () {
         Route::get('/analytics', [App\Http\Controllers\Dashboard\AnalyticsController::class, 'index'])->name('analytics.index');
     });
+
+    // Credit Notes / Avoirs (Pro+)
+    Route::middleware(['plan:pro,enterprise'])->group(function () {
+        Route::get('/credit-notes', [App\Http\Controllers\Dashboard\CreditNoteController::class, 'index'])->name('credit-notes.index');
+        Route::get('/credit-notes/create', [App\Http\Controllers\Dashboard\CreditNoteController::class, 'create'])->name('credit-notes.create');
+        Route::post('/credit-notes', [App\Http\Controllers\Dashboard\CreditNoteController::class, 'store'])->name('credit-notes.store');
+        Route::get('/credit-notes/{creditNote}', [App\Http\Controllers\Dashboard\CreditNoteController::class, 'show'])->name('credit-notes.show');
+        Route::get('/credit-notes/{creditNote}/edit', [App\Http\Controllers\Dashboard\CreditNoteController::class, 'edit'])->name('credit-notes.edit');
+        Route::put('/credit-notes/{creditNote}', [App\Http\Controllers\Dashboard\CreditNoteController::class, 'update'])->name('credit-notes.update');
+        Route::patch('/credit-notes/{creditNote}/status', [App\Http\Controllers\Dashboard\CreditNoteController::class, 'changeStatus'])->name('credit-notes.status');
+        Route::delete('/credit-notes/{creditNote}', [App\Http\Controllers\Dashboard\CreditNoteController::class, 'destroy'])->name('credit-notes.destroy');
+    });
+
+    // Recurring Invoices / Factures Récurrentes (Pro+)
+    Route::middleware(['plan:pro,enterprise'])->group(function () {
+        Route::get('/recurring-invoices', [App\Http\Controllers\Dashboard\RecurringInvoiceController::class, 'index'])->name('recurring-invoices.index');
+        Route::get('/recurring-invoices/create', [App\Http\Controllers\Dashboard\RecurringInvoiceController::class, 'create'])->name('recurring-invoices.create');
+        Route::post('/recurring-invoices', [App\Http\Controllers\Dashboard\RecurringInvoiceController::class, 'store'])->name('recurring-invoices.store');
+        Route::get('/recurring-invoices/{recurringInvoice}', [App\Http\Controllers\Dashboard\RecurringInvoiceController::class, 'show'])->name('recurring-invoices.show');
+        Route::get('/recurring-invoices/{recurringInvoice}/edit', [App\Http\Controllers\Dashboard\RecurringInvoiceController::class, 'edit'])->name('recurring-invoices.edit');
+        Route::put('/recurring-invoices/{recurringInvoice}', [App\Http\Controllers\Dashboard\RecurringInvoiceController::class, 'update'])->name('recurring-invoices.update');
+        Route::post('/recurring-invoices/{recurringInvoice}/toggle', [App\Http\Controllers\Dashboard\RecurringInvoiceController::class, 'toggleActive'])->name('recurring-invoices.toggle');
+        Route::delete('/recurring-invoices/{recurringInvoice}', [App\Http\Controllers\Dashboard\RecurringInvoiceController::class, 'destroy'])->name('recurring-invoices.destroy');
+    });
     
     // Profile
     Route::get('/profile', [App\Http\Controllers\Dashboard\ProfileController::class, 'edit'])->name('profile.edit');

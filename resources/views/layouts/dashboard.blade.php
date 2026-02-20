@@ -111,6 +111,28 @@
                         Clients
                         <span class="ml-auto px-2 py-0.5 text-xs bg-indigo-100 text-indigo-700 rounded-full">Pro</span>
                     </a>
+
+                    <!-- Avoirs / Credit Notes (Pro+) -->
+                    <a href="{{ route('client.credit-notes.index') }}"
+                        class="{{ request()->routeIs('client.credit-notes*') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50' }} flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z" />
+                        </svg>
+                        Avoirs
+                        <span class="ml-auto px-2 py-0.5 text-xs bg-indigo-100 text-indigo-700 rounded-full">Pro</span>
+                    </a>
+
+                    <!-- Factures Récurrentes (Pro+) -->
+                    <a href="{{ route('client.recurring-invoices.index') }}"
+                        class="{{ request()->routeIs('client.recurring-invoices*') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50' }} flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Factures récurrentes
+                        <span class="ml-auto px-2 py-0.5 text-xs bg-indigo-100 text-indigo-700 rounded-full">Pro</span>
+                    </a>
                 @endif
 
                 <!-- Produits & Services -->
