@@ -1,138 +1,274 @@
-# 🚀 Prochaines Étapes - Projet Invoice SaaS# 🚀 Prochaines Étapes - Projet Invoice SaaS
+# 🚀 Prochaines Étapes — Projet Invoice SaaS# 🚀 Prochaines Étapes - Projet Invoice SaaS# 🚀 Prochaines Étapes - Projet Invoice SaaS
 
 
 
-## 📍 Où nous en sommes — Mise à jour 19 Février 2026## 📍 Où nous en sommes
+## 📍 Où nous en sommes — Mise à jour 20 Février 2026
 
 
 
-### ✅ Complété (100%)### ✅ Complété (100%)
+### Complétude Globale : ~97% ✅## 📍 Où nous en sommes — Mise à jour 19 Février 2026## 📍 Où nous en sommes
 
 
 
-1. **Phase 1-7 du PRD** - Architecture complète1. **Phase 1-7 du PRD** - Architecture complète
+Le projet est **MVP+ complet** et prêt pour la production. Toutes les fonctionnalités critiques sont implémentées, testées, et fonctionnelles.
 
-   - Domain-Driven Design (DDD)   - Domain-Driven Design (DDD)
 
-   - Multi-tenancy   - Multi-tenancy
+
+---### ✅ Complété (100%)### ✅ Complété (100%)
+
+
+
+## ✅ Complété (100%)
+
+
+
+### 1. Architecture & Backend1. **Phase 1-7 du PRD** - Architecture complète1. **Phase 1-7 du PRD** - Architecture complète
+
+- Domain-Driven Design (DDD) : Domain/, Application/, Infrastructure/
+
+- Multi-tenancy : BelongsToTenant trait + ResolveTenant middleware   - Domain-Driven Design (DDD)   - Domain-Driven Design (DDD)
+
+- Repositories & Services (PdfService, InvoiceTemplateService, PlanService, CsvExportService)
+
+- Events & Listeners (InvoiceCreated, InvoiceOverdue, InvoicePaid, PaymentReceived, PaymentFailed)   - Multi-tenancy   - Multi-tenancy
+
+- Validation, Sécurité, Monitoring (Sentry + HealthCheck API)
 
    - Repositories & Services   - Repositories & Services
 
-   - Events & Listeners   - Events & Listeners
+### 2. Dashboard Client (13 contrôleurs)
 
-   - Validation   - Validation
+- Layout responsive avec sidebar + menu mobile (Alpine.js + Tailwind CSS)   - Events & Listeners   - Events & Listeners
 
-   - Sécurité   - Sécurité
+- Page d'accueil avec statistiques (KPI cards + Chart.js)
 
-   - Monitoring   - Monitoring
+- **Factures** : CRUD complet (create, edit, show, list, delete, duplicate, send, status change)   - Validation   - Validation
+
+- **Clients** : CRUD complet (Pro+ plan-gated)
+
+- **Produits** : CRUD complet (tous plans)   - Sécurité   - Sécurité
+
+- **Paiements** : Historique avec filtres
+
+- **Analytics** : Dashboard graphique (Pro+)   - Monitoring   - Monitoring
+
+- **Templates** : 8 templates PDF (classic, modern, minimal, corporate, creative, elegant, premium, african)
+
+- **Profil** : Édition profil + 2FA plan-gated
+
+- **Paramètres** : Templates, sécurité (2FA), suppression compte
+
+- **Billing** : Plans starter/pro/enterprise, upgrade/downgrade2. **Dashboard Client** (13 fichiers)2. **Dashboard Client** (13 fichiers)
+
+- **Team** : Invitations, rôles (Enterprise)
+
+- **API Keys** : CRUD + documentation (Enterprise)   - Layout responsive avec sidebar   - Layout responsive avec sidebar
 
 
 
-2. **Dashboard Client** (13 fichiers)2. **Dashboard Client** (13 fichiers)
+### 3. Authentification & Sécurité   - Page d'accueil avec statistiques   - Page d'accueil avec statistiques
 
-   - Layout responsive avec sidebar   - Layout responsive avec sidebar
+- Login/Register avec sélection de plan
 
-   - Page d'accueil avec statistiques   - Page d'accueil avec statistiques
+- Forgot/Reset password (Fortify)   - Gestion des factures (CRUD complet)   - Gestion des factures (liste + détails)
 
-   - Gestion des factures (CRUD complet)   - Gestion des factures (liste + détails)
+- Email verification (Fortify)
 
-   - Historique des paiements   - Historique des paiements
+- **2FA complet** : Activation QR code, codes de récupération, régénération, désactivation sécurisée   - Historique des paiements   - Historique des paiements
 
-   - Profil utilisateur   - Profil utilisateur
+- **Challenge 2FA à la connexion** : Redirect vers `/two-factor-challenge` si 2FA activé (Fix 22)
+
+- Plan-gating middleware : `CheckPlan`, `EnsureUserIsClient`, `EnsureUserIsAdmin`   - Profil utilisateur   - Profil utilisateur
+
+- Rate limiting : Login (5/min), 2FA (5/min), API (60/min)
 
    - Paramètres   - Paramètres
 
+### 4. Panel Admin (Filament v3)
+
+- 12+ Resources : Client, Product, Invoice, Payment, Tenant, User, TeamInvitation, Subscription, WebhookLog, ApiKey, RecurringInvoice, Quote, CreditNote
+
+- 3 Pages : Analytics, Settings, Profile
+
+- 7 Widgets : StatsOverview, RevenueChart, InvoiceStatusChart, RecentInvoices, OverdueAlert, TopClientsChart, ActivityLog3. **Authentification à Deux Facteurs (2FA)** ✅3. **Authentification à Deux Facteurs (2FA)** (8 fichiers)
 
 
-3. **Authentification à Deux Facteurs (2FA)** ✅3. **Authentification à Deux Facteurs (2FA)** (8 fichiers)
 
-   - Activation avec QR code   - Activation avec QR code
+### 5. Paiements   - Activation avec QR code   - Activation avec QR code
 
-   - Codes de récupération (8 codes)   - Codes de récupération (8 codes)
+- 8 passerelles : Stripe, Paystack, Flutterwave, Wave, MPesa, FedaPay, KKiaPay, CinetPay
 
-   - Régénération des codes   - Régénération des codes
+- Webhooks avancés (5 événements Stripe)   - Codes de récupération (8 codes)   - Codes de récupération (8 codes)
+
+- Remboursements (Stripe + Paystack)
+
+- Factures publiques + liens de paiement (`/invoices/{uuid}`)   - Régénération des codes   - Régénération des codes
+
+- WebhookLog audit trail
 
    - Désactivation sécurisée   - Désactivation sécurisée
 
-   - Interface complète   - Interface complète
+### 6. PDF & Exports
 
-   - **Page de challenge 2FA** ✅   - Documentation utilisateur
+- PdfService avec 8 templates Blade (Barryvdh\DomPDF)   - Interface complète   - Interface complète
+
+- InvoiceTemplateService : templates par plan (starter: 2, pro: 5, enterprise: 8)
+
+- Download on-the-fly depuis la liste des factures   - **Page de challenge 2FA** ✅   - Documentation utilisateur
+
+- Export CSV streaming : Clients, Factures, Paiements, Produits (Pro+)
 
    - Documentation utilisateur
 
-### ⚠️ En cours (80%)
+### 7. Notifications & Emails
 
-4. **Panel Admin Filament** ✅ (17 éléments sidebar)
+- 5 Notifications : InvoiceCreated, InvoiceSentToClient, InvoiceOverdue, PaymentReceived, Welcome### ⚠️ En cours (80%)
 
-   - 12 Resources: Client, Product, Invoice, Payment, Tenant, User, TeamInvitation, Subscription, WebhookLog, ApiKey, RecurringInvoice, Quote, CreditNote**Challenge 2FA** - Vérification lors de la connexion
+- 5 Mails : InvoiceSentMail, InvoiceReminderMail, PaymentReceivedMail, TeamInvitationMail, WelcomeMail
 
-   - 3 Pages: Analytics, Settings, Profile- Status : Infrastructure prête
+- Queue system (ShouldQueue)4. **Panel Admin Filament** ✅ (17 éléments sidebar)
 
-   - 7 Widgets: StatsOverview, RevenueChart, InvoiceStatusChart, RecentInvoices, OverdueAlert, TopClientsChart, ActivityLog- Manque : Page de challenge + middleware
+
+
+### 8. API REST (v1)   - 12 Resources: Client, Product, Invoice, Payment, Tenant, User, TeamInvitation, Subscription, WebhookLog, ApiKey, RecurringInvoice, Quote, CreditNote**Challenge 2FA** - Vérification lors de la connexion
+
+- Auth : login, register, me, logout, logout-all, refresh, tokens
+
+- Invoices : create, PDF generate, PDF download   - 3 Pages: Analytics, Settings, Profile- Status : Infrastructure prête
+
+- Payments : initiate, confirm
+
+- Health : index, detailed, ready, alive, metrics   - 7 Widgets: StatsOverview, RevenueChart, InvoiceStatusChart, RecentInvoices, OverdueAlert, TopClientsChart, ActivityLog- Manque : Page de challenge + middleware
+
+- Sanctum token auth + rate limiting
 
    - 6 Groupes sidebar: Principal, Gestion Commerciale, Analytique, Administration, Abonnements, Configuration- Priorité : HAUTE
 
-- Temps estimé : 2-3 heures
+### 9. Modèles additionnels (Admin Filament)
 
-5. **Tests Automatisés** ✅ (238+ tests, 671+ assertions)
+- RecurringInvoice : Modèle + commande `invoices:generate-recurring` + Filament Resource- Temps estimé : 2-3 heures
 
-   - Tests unitaires (Models, Services, Policies)---
+- CreditNote : Modèle + migration + Filament Resource
 
-   - Tests fonctionnels (Controllers, Middleware)
-
-   - Tests API (Sanctum, CRUD)## 🎯 Options pour Continuer
-
-   - Tests Webhooks, Export CSV
-
-   - CI/CD GitHub Actions (4 jobs)### Option 1 : Finaliser le 2FA (Recommandé) ⭐
+- Quote : Via Invoice model (type=quote) + Filament Resource5. **Tests Automatisés** ✅ (238+ tests, 671+ assertions)
 
 
 
-6. **Export CSV/Excel** ✅**Objectif** : Rendre le 2FA 100% fonctionnel avec vérification à la connexion
+### 10. Tests Automatisés   - Tests unitaires (Models, Services, Policies)---
+
+- **328 tests, 909 assertions** — ALL GREEN ✅
+
+- Tests unitaires : Models (Invoice, User), Services (InvoiceTemplateService, PdfService)   - Tests fonctionnels (Controllers, Middleware)
+
+- Tests fonctionnels : Controllers, Middleware, Plan gating, 2FA login flow
+
+- Tests API : Sanctum auth, CRUD, Webhooks   - Tests API (Sanctum, CRUD)## 🎯 Options pour Continuer
+
+- CI/CD : GitHub Actions (4 jobs)
+
+- Coverage : PCOV, Clover XML + HTML reports   - Tests Webhooks, Export CSV
+
+
+
+### 11. Infrastructure   - CI/CD GitHub Actions (4 jobs)### Option 1 : Finaliser le 2FA (Recommandé) ⭐
+
+- Landing page marketing (statistiques réelles)
+
+- Pages légales (CGU, confidentialité, mentions légales)
+
+- Team invitations (public routes)
+
+- Stripe webhook endpoint6. **Export CSV/Excel** ✅**Objectif** : Rendre le 2FA 100% fonctionnel avec vérification à la connexion
+
+- XOF currency (0 décimales) partout
 
    - CsvExportService avec streaming
 
+---
+
    - 4 exports: Clients, Factures, Paiements, Produits**Tâches** :
+
+## ⏳ Non implémenté (Nice-to-Have)
 
    - Filtres par date, statut, passerelle1. Créer la page de challenge (`auth/two-factor-challenge.blade.php`)
 
+Ces fonctionnalités ne sont **pas nécessaires pour le MVP** mais pourraient être ajoutées :
+
    - Boutons dans Filament2. Créer le contrôleur `TwoFactorChallengeController`
 
-3. Ajouter le middleware de vérification
+| Fonctionnalité | Complexité | Temps estimé |
 
-7. **Intégrations Paiement Avancées** ✅4. Implémenter la logique de validation TOTP
+|---|---|---|3. Ajouter le middleware de vérification
 
-   - 8 passerelles: Stripe, Paystack, Flutterwave, Wave, MPesa, FedaPay, KKiaPay, CinetPay5. Gérer les codes de récupération dans le challenge
+| Branding personnalisé (logo/couleurs par tenant) | ⭐⭐⭐ | 4-5h |
 
-   - Webhooks avancés (5 événements Stripe)6. Tester le flux complet de connexion
+| Rapports PDF exportables (synthèse mensuelle) | ⭐⭐⭐ | 3-4h |7. **Intégrations Paiement Avancées** ✅4. Implémenter la logique de validation TOTP
 
-   - Remboursements (Stripe + Paystack)
+| Tests E2E (Laravel Dusk) | ⭐⭐⭐⭐ | 6-8h |
+
+| Documentation API Swagger (l5-swagger) | ⭐⭐ | 2-3h |   - 8 passerelles: Stripe, Paystack, Flutterwave, Wave, MPesa, FedaPay, KKiaPay, CinetPay5. Gérer les codes de récupération dans le challenge
+
+| Multi-langue (i18n) | ⭐⭐⭐⭐ | 6-8h |
+
+| PWA (Progressive Web App) | ⭐⭐⭐ | 4-5h |   - Webhooks avancés (5 événements Stripe)6. Tester le flux complet de connexion
+
+| Notifications push (WebSocket/Pusher) | ⭐⭐⭐⭐ | 5-6h |
+
+| CRUD Dashboard pour CreditNote | ⭐⭐ | 3-4h |   - Remboursements (Stripe + Paystack)
+
+| CRUD Dashboard pour RecurringInvoice | ⭐⭐⭐ | 4-5h |
 
    - WebhookLog audit trail**Durée estimée** : 2-3 heures  
 
+---
+
 **Complexité** : ⭐⭐⭐☆☆ (Moyen)  
+
+## 📋 Historique des Corrections
 
 8. **Factures Récurrentes** ✅**Impact** : ⭐⭐⭐⭐⭐ (Critique)
 
-   - Modèle RecurringInvoice
+### Batch 1-6 (Fixes 1-21) — Dashboard Audit
 
-   - Commande `invoices:generate-recurring`---
+- Tenant leaks dans Analytics/Payment/Export controllers   - Modèle RecurringInvoice
 
-   - Planification automatique (cron daily à 6h)
+- Menu mobile, boutons d'action, notification bell
 
-   - Filament Resource complète### Option 2 : Gestion des Clients
+- Currency XOF 0 décimales partout   - Commande `invoices:generate-recurring`---
 
-   - Envoi automatique optionnel
+- 8 templates PDF (PdfService rewrite)
+
+- Invoice `invoice_number` accessor   - Planification automatique (cron daily à 6h)
+
+- PDF download on-the-fly + bouton dans la liste
+
+- Plan middleware sur exports + 2FA routes   - Filament Resource complète### Option 2 : Gestion des Clients
+
+- Settings templates tab, security tab plan gate
+
+- Delete account avec confirmation Alpine.js   - Envoi automatique optionnel
+
+- Profile 2FA plan gate
 
 **Objectif** : Interface complète pour gérer les clients
 
-9. **Devis/Quotes** ✅
+### Batch 7 (Fixes 22-24) — 2FA & Routes
 
-   - Utilise Invoice model (type=quote)**Tâches** :
+- **Fix 22** : Login redirige vers 2FA challenge quand 2FA activé (faille de sécurité corrigée)9. **Devis/Quotes** ✅
 
-   - QuoteResource Filament dédiée1. Page liste des clients (`/dashboard/clients`)
+- **Fix 23** : TwoFactorController — 5x `route('dashboard.settings')` → `route('client.settings.index')`
 
-   - Action "Convertir en facture"2. Page détails d'un client
+- **Fix 24** : LoginController valide les identifiants manuellement (Hash::check) au lieu de Auth::attempt pour ne pas bypasser le 2FA   - Utilise Invoice model (type=quote)**Tâches** :
+
+
+
+---   - QuoteResource Filament dédiée1. Page liste des clients (`/dashboard/clients`)
+
+
+
+**Dernière mise à jour** : 20 février 2026   - Action "Convertir en facture"2. Page détails d'un client
+
+**Statut général** : ✅ MVP+ Complet, 328 tests green, prêt pour production
 
    - Numérotation dédiée DEV-XXXXX3. Formulaire création/édition client
 

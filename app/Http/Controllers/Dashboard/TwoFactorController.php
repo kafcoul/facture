@@ -25,7 +25,7 @@ class TwoFactorController extends Controller
 
         // Si déjà activé, rediriger vers les settings
         if ($user->two_factor_secret) {
-            return redirect()->route('dashboard.settings')->with('info', 'L\'authentification à deux facteurs est déjà activée.');
+            return redirect()->route('client.settings.index')->with('info', 'L\'authentification à deux facteurs est déjà activée.');
         }
 
         // Générer un nouveau secret
@@ -71,7 +71,7 @@ class TwoFactorController extends Controller
         $secret = session('two_factor_secret');
 
         if (!$secret) {
-            return redirect()->route('dashboard.settings')->with('error', 'Session expirée. Veuillez réessayer.');
+            return redirect()->route('client.settings.index')->with('error', 'Session expirée. Veuillez réessayer.');
         }
 
         // Vérifier le code
@@ -127,7 +127,7 @@ class TwoFactorController extends Controller
         $user->two_factor_confirmed_at = null;
         $user->save();
 
-        return redirect()->route('dashboard.settings')->with('success', 'L\'authentification à deux facteurs a été désactivée.');
+        return redirect()->route('client.settings.index')->with('success', 'L\'authentification à deux facteurs a été désactivée.');
     }
 
     /**
@@ -138,7 +138,7 @@ class TwoFactorController extends Controller
         $user = Auth::user();
 
         if (!$user->two_factor_secret) {
-            return redirect()->route('dashboard.settings')->with('error', 'L\'authentification à deux facteurs n\'est pas activée.');
+            return redirect()->route('client.settings.index')->with('error', 'L\'authentification à deux facteurs n\'est pas activée.');
         }
 
         $recoveryCodes = json_decode(decrypt($user->two_factor_recovery_codes), true);
@@ -168,7 +168,7 @@ class TwoFactorController extends Controller
         }
 
         if (!$user->two_factor_secret) {
-            return redirect()->route('dashboard.settings')->with('error', 'L\'authentification à deux facteurs n\'est pas activée.');
+            return redirect()->route('client.settings.index')->with('error', 'L\'authentification à deux facteurs n\'est pas activée.');
         }
 
         // Générer de nouveaux codes
