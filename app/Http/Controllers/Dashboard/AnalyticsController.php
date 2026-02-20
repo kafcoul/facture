@@ -67,7 +67,8 @@ class AnalyticsController extends Controller
      */
     private function getRevenueStats($user, $startDate)
     {
-        $query = Invoice::where('status', 'paid');
+        $tenantId = $user->tenant_id;
+        $query = Invoice::where('tenant_id', $tenantId)->where('status', 'paid');
         
         if ($startDate) {
             $query->where('paid_at', '>=', $startDate);
@@ -82,7 +83,8 @@ class AnalyticsController extends Controller
             $previousStartDate = $startDate->copy()->subDays($daysDiff);
             $previousEndDate = $startDate->copy();
             
-            $previousPeriodRevenue = Invoice::where('status', 'paid')
+            $previousPeriodRevenue = Invoice::where('tenant_id', $tenantId)
+                ->where('status', 'paid')
                 ->whereBetween('paid_at', [$previousStartDate, $previousEndDate])
                 ->sum('total');
         }
@@ -104,7 +106,8 @@ class AnalyticsController extends Controller
      */
     private function getInvoiceStats($user, $startDate)
     {
-        $query = Invoice::query();
+        $tenantId = $user->tenant_id;
+        $query = Invoice::where('tenant_id', $tenantId);
         
         if ($startDate) {
             $query->where('created_at', '>=', $startDate);
@@ -118,7 +121,8 @@ class AnalyticsController extends Controller
         $paymentRate = $total > 0 ? ($paid / $total) * 100 : 0;
         
         // Average payment time
-        $avgPaymentDays = Invoice::where('status', 'paid')
+        $avgPaymentDays = Invoice::where('tenant_id', $tenantId)
+            ->where('status', 'paid')
             ->whereNotNull('paid_at')
             ->when($startDate, fn($q) => $q->where('created_at', '>=', $startDate))
             ->selectRaw('AVG(DATEDIFF(paid_at, created_at)) as avg_days')
@@ -140,7 +144,8 @@ class AnalyticsController extends Controller
      */
     private function getPaymentStats($user, $startDate)
     {
-        $query = Payment::query();
+        $tenantId = $user->tenant_id;
+        $query = Payment::where('tenant_id', $tenantId);
         
         if ($startDate) {
             $query->where('created_at', '>=', $startDate);
@@ -171,17 +176,19 @@ class AnalyticsController extends Controller
      */
     private function getClientStats($user, $startDate)
     {
-        $query = Client::query();
+        $tenantId = $user->tenant_id;
+        $query = Client::where('tenant_id', $tenantId);
         
         if ($startDate) {
             $query->where('created_at', '>=', $startDate);
         }
 
-        $totalClients = Client::count();
+        $totalClients = Client::where('tenant_id', $tenantId)->count();
         $newClients = (clone $query)->count();
         
         // Active clients (with invoices in period)
-        $activeClients = Client::whereHas('invoices', function ($q) use ($startDate) {
+        $activeClients = Client::where('tenant_id', $tenantId)
+            ->whereHas('invoices', function ($q) use ($startDate) {
                 if ($startDate) {
                     $q->where('created_at', '>=', $startDate);
                 }
@@ -200,6 +207,7 @@ class AnalyticsController extends Controller
      */
     private function getRevenueChartData($user)
     {
+        $tenantId = $user->tenant_id;
         $data = [];
         
         for ($i = 11; $i >= 0; $i--) {
@@ -207,7 +215,8 @@ class AnalyticsController extends Controller
             $monthStart = $date->copy()->startOfMonth();
             $monthEnd = $date->copy()->endOfMonth();
             
-            $revenue = Invoice::where('status', 'paid')
+            $revenue = Invoice::where('tenant_id', $tenantId)
+                ->where('status', 'paid')
                 ->whereBetween('paid_at', [$monthStart, $monthEnd])
                 ->sum('total');
             
@@ -225,7 +234,9 @@ class AnalyticsController extends Controller
      */
     private function getTopClients($user, $startDate, $limit = 5)
     {
-        return Client::withSum(['invoices' => function ($query) use ($startDate) {
+        $tenantId = $user->tenant_id;
+        return Client::where('tenant_id', $tenantId)
+            ->withSum(['invoices' => function ($query) use ($startDate) {
                 $query->where('status', 'paid');
                 if ($startDate) {
                     $query->where('paid_at', '>=', $startDate);
@@ -242,7 +253,8 @@ class AnalyticsController extends Controller
      */
     private function getInvoiceStatusDistribution($user, $startDate)
     {
-        $query = Invoice::query();
+        $tenantId = $user->tenant_id;
+        $query = Invoice::where('tenant_id', $tenantId);
         
         if ($startDate) {
             $query->where('created_at', '>=', $startDate);

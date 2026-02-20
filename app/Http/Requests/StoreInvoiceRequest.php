@@ -33,7 +33,7 @@ class StoreInvoiceRequest extends FormRequest
             // Items (lignes de facture)
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'nullable|exists:products,id',
-            'items.*.description' => 'required|string|max:500',
+            'items.*.description' => 'nullable|string|max:500',
             'items.*.quantity' => 'required|numeric|min:0.01',
             'items.*.unit_price' => 'required|numeric|min:0',
             'items.*.tax_rate' => 'required|numeric|min:0|max:100',

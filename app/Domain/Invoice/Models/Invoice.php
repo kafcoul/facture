@@ -49,6 +49,8 @@ class Invoice extends Model
         'total' => 'decimal:2',
     ];
 
+    protected $appends = ['invoice_number'];
+
     protected static function boot()
     {
         parent::boot();
@@ -69,6 +71,15 @@ class Invoice extends Model
     protected static function newFactory()
     {
         return \Database\Factories\InvoiceFactory::new();
+    }
+
+    /**
+     * Accessor: $invoice->invoice_number retourne $this->number
+     * Compatibilité avec les vues et Filament qui référencent invoice_number
+     */
+    public function getInvoiceNumberAttribute(): ?string
+    {
+        return $this->number;
     }
 
     /**

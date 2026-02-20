@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Http\Requests\StoreInvoiceRequest;
 use App\Services\InvoiceNumberService;
 use App\Services\InvoiceCalculatorService;
+use App\Services\PdfService;
 use App\Domain\Invoice\Events\InvoiceCreated;
 use App\Jobs\SendInvoiceEmailJob;
 use Illuminate\Http\Request;
@@ -58,11 +59,18 @@ class InvoiceController extends Controller
     {
         $this->authorize('view', $invoice);
 
-        if (!$invoice->pdf_path) {
-            return back()->with('error', 'Le PDF de cette facture n\'est pas encore généré.');
-        }
+        $invoice->load(['client', 'items.product', 'user', 'payments']);
 
-        return response()->download(storage_path('app/public/' . $invoice->pdf_path));
+        try {
+            $pdfService = new PdfService();
+            $pdf = $pdfService->generateInvoicePdf($invoice);
+
+            $filename = 'facture-' . ($invoice->number ?? $invoice->id) . '.pdf';
+
+            return $pdf->download($filename);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Erreur lors de la génération du PDF : ' . $e->getMessage());
+        }
     }
 
     public function create()
@@ -108,10 +116,16 @@ class InvoiceController extends Controller
             ]);
 
             foreach ($request->items as $item) {
+                $description = $item['description'] ?? '';
+                if (empty($description) && !empty($item['product_id'])) {
+                    $product = Product::find($item['product_id']);
+                    $description = $product ? $product->name : 'Article';
+                }
+                
                 InvoiceItem::create([
                     'invoice_id' => $invoice->id,
                     'product_id' => $item['product_id'] ?? null,
-                    'description' => $item['description'],
+                    'description' => $description ?: 'Article',
                     'quantity' => $item['quantity'],
                     'unit_price' => $item['unit_price'],
                     'tax_rate' => $item['tax_rate'],
@@ -182,10 +196,16 @@ class InvoiceController extends Controller
             $invoice->items()->delete();
 
             foreach ($request->items as $item) {
+                $description = $item['description'] ?? '';
+                if (empty($description) && !empty($item['product_id'])) {
+                    $product = Product::find($item['product_id']);
+                    $description = $product ? $product->name : 'Article';
+                }
+                
                 InvoiceItem::create([
                     'invoice_id' => $invoice->id,
                     'product_id' => $item['product_id'] ?? null,
-                    'description' => $item['description'],
+                    'description' => $description ?: 'Article',
                     'quantity' => $item['quantity'],
                     'unit_price' => $item['unit_price'],
                     'tax_rate' => $item['tax_rate'],

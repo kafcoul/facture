@@ -17,22 +17,23 @@ class EnsureUserIsClient
     {
         // Vérifier si l'utilisateur est authentifié
         if (!auth()->check()) {
-            return redirect()->route('login');
+            return redirect('/login');
         }
 
         $user = auth()->user();
-        
-        // Tous les utilisateurs authentifiés peuvent accéder au dashboard client
-        // Sauf les super_admin qui doivent aller sur /admin
-        // Les rôles autorisés: client, user, admin (ce sont tous des clients de la plateforme)
-        $allowedRoles = ['client', 'user', 'admin'];
-        
-        if (!in_array($user->role, $allowedRoles)) {
-            // Si c'est un super_admin ou propriétaire, le rediriger vers /admin
-            if ($user->role === 'super_admin' || $user->is_owner) {
-                return redirect('/admin');
-            }
+
+        // Les admins doivent aller sur /admin
+        if ($user->role === 'admin') {
+            return redirect('/admin');
+        }
+
+        // Seuls les clients actifs avec un tenant peuvent accéder
+        if ($user->role !== 'client') {
             abort(403, 'Accès refusé. Cette interface est réservée aux clients.');
+        }
+
+        if (!$user->is_active || !$user->tenant_id) {
+            abort(403, 'Accès refusé. Votre compte est inactif ou non configuré.');
         }
 
         return $next($request);

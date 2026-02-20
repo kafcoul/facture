@@ -34,12 +34,21 @@ class SubscriptionResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::where('role', 'client')->count() ?: null;
+        $tenantId = auth()->user()?->tenant_id;
+        if (!$tenantId) return null;
+
+        return static::getModel()::where('tenant_id', $tenantId)
+            ->where('role', 'client')
+            ->count() ?: null;
     }
 
     public static function getNavigationBadgeColor(): ?string
     {
-        $expiring = static::getModel()::where('role', 'client')
+        $tenantId = auth()->user()?->tenant_id;
+        if (!$tenantId) return 'primary';
+
+        $expiring = static::getModel()::where('tenant_id', $tenantId)
+            ->where('role', 'client')
             ->whereNotNull('trial_ends_at')
             ->where('trial_ends_at', '<=', now()->addDays(7))
             ->where('trial_ends_at', '>', now())
@@ -51,6 +60,7 @@ class SubscriptionResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
+            ->where('tenant_id', auth()->user()?->tenant_id)
             ->where('role', 'client')
             ->whereNotNull('plan');
     }

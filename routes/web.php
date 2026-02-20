@@ -104,16 +104,14 @@ Route::middleware(['auth', 'verified', 'client'])->prefix('client')->name('clien
         Route::delete('/clients/{client}', [App\Http\Controllers\Dashboard\ClientController::class, 'destroy'])->name('clients.destroy');
     });
     
-    // Products (Pro+)
-    Route::middleware(['plan:pro,enterprise'])->group(function () {
-        Route::get('/products', [App\Http\Controllers\Dashboard\ProductController::class, 'index'])->name('products.index');
-        Route::get('/products/create', [App\Http\Controllers\Dashboard\ProductController::class, 'create'])->name('products.create');
-        Route::post('/products', [App\Http\Controllers\Dashboard\ProductController::class, 'store'])->name('products.store');
-        Route::get('/products/{product}', [App\Http\Controllers\Dashboard\ProductController::class, 'show'])->name('products.show');
-        Route::get('/products/{product}/edit', [App\Http\Controllers\Dashboard\ProductController::class, 'edit'])->name('products.edit');
-        Route::put('/products/{product}', [App\Http\Controllers\Dashboard\ProductController::class, 'update'])->name('products.update');
-        Route::delete('/products/{product}', [App\Http\Controllers\Dashboard\ProductController::class, 'destroy'])->name('products.destroy');
-    });
+    // Products (tous les plans)
+    Route::get('/products', [App\Http\Controllers\Dashboard\ProductController::class, 'index'])->name('products.index');
+    Route::get('/products/create', [App\Http\Controllers\Dashboard\ProductController::class, 'create'])->name('products.create');
+    Route::post('/products', [App\Http\Controllers\Dashboard\ProductController::class, 'store'])->name('products.store');
+    Route::get('/products/{product}', [App\Http\Controllers\Dashboard\ProductController::class, 'show'])->name('products.show');
+    Route::get('/products/{product}/edit', [App\Http\Controllers\Dashboard\ProductController::class, 'edit'])->name('products.edit');
+    Route::put('/products/{product}', [App\Http\Controllers\Dashboard\ProductController::class, 'update'])->name('products.update');
+    Route::delete('/products/{product}', [App\Http\Controllers\Dashboard\ProductController::class, 'destroy'])->name('products.destroy');
     
     // Analytics (Pro+)
     Route::middleware(['plan:pro,enterprise'])->group(function () {
@@ -133,20 +131,22 @@ Route::middleware(['auth', 'verified', 'client'])->prefix('client')->name('clien
     Route::post('/templates/{templateId}/select', [App\Http\Controllers\Dashboard\TemplateController::class, 'select'])->name('templates.select');
     Route::get('/templates/{templateId}/preview', [App\Http\Controllers\Dashboard\TemplateController::class, 'preview'])->name('templates.preview');
     
-    // Exports CSV
-    Route::prefix('exports')->name('exports.')->group(function () {
+    // Exports CSV (Pro+)
+    Route::middleware(['plan:pro,enterprise'])->prefix('exports')->name('exports.')->group(function () {
         Route::get('/clients', [App\Http\Controllers\ExportController::class, 'clients'])->name('clients');
         Route::get('/invoices', [App\Http\Controllers\ExportController::class, 'invoices'])->name('invoices');
         Route::get('/payments', [App\Http\Controllers\ExportController::class, 'payments'])->name('payments');
         Route::get('/products', [App\Http\Controllers\ExportController::class, 'products'])->name('products');
     });
 
-    // Two-Factor Authentication
-    Route::get('/two-factor/enable', [App\Http\Controllers\Dashboard\TwoFactorController::class, 'enable'])->name('two-factor.enable');
-    Route::post('/two-factor/confirm', [App\Http\Controllers\Dashboard\TwoFactorController::class, 'confirm'])->name('two-factor.confirm');
-    Route::delete('/two-factor/disable', [App\Http\Controllers\Dashboard\TwoFactorController::class, 'disable'])->name('two-factor.disable');
-    Route::get('/two-factor/recovery-codes', [App\Http\Controllers\Dashboard\TwoFactorController::class, 'showRecoveryCodes'])->name('two-factor.recovery-codes');
-    Route::post('/two-factor/recovery-codes/regenerate', [App\Http\Controllers\Dashboard\TwoFactorController::class, 'regenerateRecoveryCodes'])->name('two-factor.recovery-codes.regenerate');
+    // Two-Factor Authentication (Pro+)
+    Route::middleware(['plan:pro,enterprise'])->group(function () {
+        Route::get('/two-factor/enable', [App\Http\Controllers\Dashboard\TwoFactorController::class, 'enable'])->name('two-factor.enable');
+        Route::post('/two-factor/confirm', [App\Http\Controllers\Dashboard\TwoFactorController::class, 'confirm'])->name('two-factor.confirm');
+        Route::delete('/two-factor/disable', [App\Http\Controllers\Dashboard\TwoFactorController::class, 'disable'])->name('two-factor.disable');
+        Route::get('/two-factor/recovery-codes', [App\Http\Controllers\Dashboard\TwoFactorController::class, 'showRecoveryCodes'])->name('two-factor.recovery-codes');
+        Route::post('/two-factor/recovery-codes/regenerate', [App\Http\Controllers\Dashboard\TwoFactorController::class, 'regenerateRecoveryCodes'])->name('two-factor.recovery-codes.regenerate');
+    });
     
     // Team Management (Enterprise only)
     Route::middleware(['plan:enterprise'])->prefix('team')->name('team.')->group(function () {

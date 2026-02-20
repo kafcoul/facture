@@ -10,7 +10,8 @@ class PaymentController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Payment::query()
+        $user = auth()->user();
+        $query = Payment::where('tenant_id', $user->tenant_id)
             ->with('invoice.client')
             ->latest();
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\InvoiceTemplateService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -71,13 +72,12 @@ class SettingsController extends Controller
 
     /**
      * Obtenir les templates autorisés pour un plan
+     * Délègue à InvoiceTemplateService (source unique de vérité)
      */
     private function getAllowedTemplates(?string $plan): array
     {
-        return match($plan) {
-            'enterprise' => ['starter', 'pro', 'pro-minimal', 'pro-bold', 'enterprise', 'enterprise-dark', 'enterprise-minimal'],
-            'pro' => ['starter', 'pro', 'pro-minimal', 'pro-bold'],
-            default => ['starter'],
-        };
+        $plan = $plan ?? 'starter';
+        $templates = InvoiceTemplateService::getTemplatesForPlan($plan);
+        return array_keys($templates);
     }
 }

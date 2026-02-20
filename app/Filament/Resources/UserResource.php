@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class UserResource extends Resource
 {
@@ -35,7 +36,16 @@ class UserResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count() ?: null;
+        $tenantId = auth()->user()?->tenant_id;
+        if (!$tenantId) return null;
+
+        return static::getModel()::where('tenant_id', $tenantId)->count() ?: null;
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('tenant_id', auth()->user()?->tenant_id);
     }
 
     public static function form(Form $form): Form

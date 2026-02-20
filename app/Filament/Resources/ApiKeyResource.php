@@ -33,7 +33,18 @@ class ApiKeyResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::active()->count() ?: null;
+        $tenantId = auth()->user()?->tenant_id;
+        if (!$tenantId) return null;
+
+        return static::getModel()::where('tenant_id', $tenantId)
+            ->active()
+            ->count() ?: null;
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('tenant_id', auth()->user()?->tenant_id);
     }
 
     public static function form(Form $form): Form

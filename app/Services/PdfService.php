@@ -3,18 +3,29 @@
 namespace App\Services;
 
 use App\Domain\Invoice\Models\Invoice;
+use App\Services\InvoiceTemplateService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 
 class PdfService
 {
     /**
-     * Templates disponibles par plan
+     * IDs de templates valides (correspondent aux fichiers pdf/templates/*.blade.php)
+     * Alignés avec InvoiceTemplateService
      */
-    private const PLAN_TEMPLATES = [
-        'starter' => ['starter'],
-        'pro' => ['starter', 'pro', 'pro-minimal', 'pro-bold'],
-        'enterprise' => ['starter', 'pro', 'pro-minimal', 'pro-bold', 'enterprise', 'enterprise-dark', 'enterprise-minimal'],
+    private const VALID_TEMPLATES = [
+        'classic', 'modern',                          // starter
+        'minimal', 'corporate', 'creative',           // pro
+        'elegant', 'premium', 'african',              // enterprise
+    ];
+
+    /**
+     * Template par défaut pour chaque plan
+     */
+    private const DEFAULT_TEMPLATE = [
+        'starter' => 'classic',
+        'pro' => 'minimal',
+        'enterprise' => 'elegant',
     ];
 
     /**
@@ -57,20 +68,22 @@ class PdfService
 
     /**
      * Déterminer le template à utiliser pour une facture
+     * Utilise InvoiceTemplateService pour la validation des plans
      */
     private function getTemplateForInvoice(Invoice $invoice): string
     {
         $user = $invoice->user;
         $plan = $user->plan ?? 'starter';
-        $selectedTemplate = $user->invoice_template ?? 'starter';
+        $selectedTemplate = $user->invoice_template ?? null;
 
-        // Vérifier que le template est autorisé pour le plan
-        $allowedTemplates = self::PLAN_TEMPLATES[$plan] ?? self::PLAN_TEMPLATES['starter'];
-
-        if (in_array($selectedTemplate, $allowedTemplates)) {
-            // Vérifier que le fichier existe
-            if (view()->exists("pdf.templates.{$selectedTemplate}")) {
-                return $selectedTemplate;
+        // Si un template est sélectionné, vérifier qu'il est valide et autorisé
+        if ($selectedTemplate && in_array($selectedTemplate, self::VALID_TEMPLATES)) {
+            // Vérifier via InvoiceTemplateService que le plan autorise ce template
+            if (InvoiceTemplateService::canUseTemplate($selectedTemplate, $plan)) {
+                // Vérifier que le fichier Blade existe
+                if (view()->exists("pdf.templates.{$selectedTemplate}")) {
+                    return $selectedTemplate;
+                }
             }
         }
 
@@ -83,66 +96,16 @@ class PdfService
      */
     private function getDefaultTemplateForPlan(string $plan): string
     {
-        return match($plan) {
-            'enterprise' => 'enterprise',
-            'pro' => 'pro',
-            default => 'starter',
-        };
+        return self::DEFAULT_TEMPLATE[$plan] ?? self::DEFAULT_TEMPLATE['starter'];
     }
 
     /**
      * Obtenir les templates disponibles pour un plan
+     * Délègue à InvoiceTemplateService (source unique de vérité)
      */
     public static function getAvailableTemplates(string $plan): array
     {
-        $templates = [
-            'starter' => [
-                'id' => 'starter',
-                'name' => 'Classique',
-                'description' => 'Design simple et professionnel',
-                'preview' => '/images/templates/starter.png',
-            ],
-            'pro' => [
-                'id' => 'pro',
-                'name' => 'Pro Moderne',
-                'description' => 'Design moderne avec dégradés et QR code paiement',
-                'preview' => '/images/templates/pro.png',
-            ],
-            'pro-minimal' => [
-                'id' => 'pro-minimal',
-                'name' => 'Pro Minimal',
-                'description' => 'Design épuré et minimaliste',
-                'preview' => '/images/templates/pro-minimal.png',
-            ],
-            'pro-bold' => [
-                'id' => 'pro-bold',
-                'name' => 'Pro Bold',
-                'description' => 'Design audacieux avec couleurs vives',
-                'preview' => '/images/templates/pro-bold.png',
-            ],
-            'enterprise' => [
-                'id' => 'enterprise',
-                'name' => 'Enterprise Premium',
-                'description' => 'Design premium avec QR code et montant en lettres',
-                'preview' => '/images/templates/enterprise.png',
-            ],
-            'enterprise-dark' => [
-                'id' => 'enterprise-dark',
-                'name' => 'Enterprise Dark',
-                'description' => 'Design sombre et élégant',
-                'preview' => '/images/templates/enterprise-dark.png',
-            ],
-            'enterprise-minimal' => [
-                'id' => 'enterprise-minimal',
-                'name' => 'Enterprise Minimal',
-                'description' => 'Design minimaliste haut de gamme',
-                'preview' => '/images/templates/enterprise-minimal.png',
-            ],
-        ];
-
-        $allowedTemplateIds = self::PLAN_TEMPLATES[$plan] ?? self::PLAN_TEMPLATES['starter'];
-
-        return array_filter($templates, fn($t) => in_array($t['id'], $allowedTemplateIds));
+        return InvoiceTemplateService::getTemplatesForPlan($plan);
     }
 
     /**

@@ -20,20 +20,15 @@ class EnsureUserIsAdmin
             return redirect('/admin/login');
         }
 
-        // RESTRICTION: Seul le propriétaire peut accéder à /admin
-        // Liste des emails autorisés (ajoutez votre email ici)
-        $authorizedEmails = [
-            env('SUPER_ADMIN_EMAIL', 'leaudouce0@gmail.com'),
-        ];
+        // Seuls les admins actifs avec un tenant peuvent accéder à /admin
+        $user = auth()->user();
 
-        // Vérifier si l'email de l'utilisateur est autorisé
-        if (!in_array(auth()->user()->email, $authorizedEmails)) {
-            abort(403, 'Accès refusé. Seul le propriétaire de la plateforme peut accéder à cette interface.');
+        if ($user->role !== 'admin') {
+            abort(403, 'Accès refusé. Cette interface est réservée aux administrateurs.');
         }
 
-        // Vérifier également le rôle admin pour double sécurité
-        if (auth()->user()->role !== 'admin') {
-            abort(403, 'Accès refusé. Cette interface est réservée au propriétaire.');
+        if (!$user->is_active || !$user->tenant_id) {
+            abort(403, 'Accès refusé. Votre compte est inactif ou non configuré.');
         }
 
         return $next($request);

@@ -31,11 +31,19 @@
 </head>
 
 <body class="font-sans antialiased bg-gray-50">
-    <div class="min-h-screen">
+    <div class="min-h-screen" x-data="{ sidebarOpen: false }">
+
+        <!-- Mobile sidebar backdrop -->
+        <div x-show="sidebarOpen" x-cloak x-transition:enter="transition-opacity ease-linear duration-300"
+            x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+            x-transition:leave="transition-opacity ease-linear duration-300" x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0" @click="sidebarOpen = false"
+            class="fixed inset-0 z-40 bg-gray-600/75 lg:hidden"></div>
+
         <!-- Sidebar -->
         <aside
             class="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0"
-            x-data="{ open: false }" :class="{ '-translate-x-full': !open }">
+            :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
 
             <!-- Logo -->
             <div class="flex items-center justify-between h-16 px-6 border-b border-gray-200">
@@ -46,6 +54,13 @@
                     </svg>
                     <span class="text-xl font-bold text-gray-900">InvoicePro</span>
                 </a>
+                <!-- Close button (mobile) -->
+                <button @click="sidebarOpen = false" class="lg:hidden p-1 text-gray-400 hover:text-gray-600 rounded-md">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
 
             <!-- Navigation -->
@@ -81,10 +96,12 @@
                     $userPlan = auth()->user()->plan ?? 'starter';
                     $tenant = auth()->user()->tenant;
                     $isOnTrial = $tenant && $tenant->trial_ends_at && $tenant->trial_ends_at->isFuture();
+                    $isPro = in_array($userPlan, ['pro', 'enterprise']);
+                    $isEnterprise = $userPlan === 'enterprise';
                 @endphp
 
                 <!-- Clients (Pro+) -->
-                @if (in_array($userPlan, ['pro', 'enterprise']))
+                @if ($isPro)
                     <a href="{{ route('client.clients.index') }}"
                         class="{{ request()->routeIs('client.clients*') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50' }} flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,23 +109,22 @@
                                 d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
                         Clients
+                        <span class="ml-auto px-2 py-0.5 text-xs bg-indigo-100 text-indigo-700 rounded-full">Pro</span>
                     </a>
                 @endif
 
-                <!-- Produits (Pro+) -->
-                @if (in_array($userPlan, ['pro', 'enterprise']))
-                    <a href="{{ route('client.products.index') }}"
-                        class="{{ request()->routeIs('client.products*') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50' }} flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                        </svg>
-                        Produits
-                    </a>
-                @endif
+                <!-- Produits & Services -->
+                <a href="{{ route('client.products.index') }}"
+                    class="{{ request()->routeIs('client.products*') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50' }} flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                    Produits & Services
+                </a>
 
                 <!-- Analytiques (Pro+) -->
-                @if (in_array($userPlan, ['pro', 'enterprise']))
+                @if ($isPro)
                     <a href="{{ route('client.analytics.index') }}"
                         class="{{ request()->routeIs('client.analytics*') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50' }} flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,7 +132,49 @@
                                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                         </svg>
                         Analytiques
+                        <span class="ml-auto px-2 py-0.5 text-xs bg-indigo-100 text-indigo-700 rounded-full">Pro</span>
                     </a>
+                @endif
+
+                <!-- Exports CSV (Pro+) -->
+                @if ($isPro)
+                    <div x-data="{ openExports: false }" class="relative">
+                        <button @click="openExports = !openExports" type="button"
+                            class="{{ request()->routeIs('client.exports*') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50' }} flex items-center w-full px-4 py-3 text-sm font-medium rounded-lg transition-colors">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            Exports CSV
+                            <span class="ml-auto flex items-center gap-1">
+                                <span class="px-2 py-0.5 text-xs bg-indigo-100 text-indigo-700 rounded-full">Pro</span>
+                                <svg class="w-4 h-4 text-gray-400 transition-transform"
+                                    :class="{ 'rotate-180': openExports }" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </span>
+                        </button>
+                        <div x-show="openExports" x-cloak x-transition class="ml-8 mt-1 space-y-1">
+                            <a href="{{ route('client.exports.invoices') }}"
+                                class="flex items-center px-4 py-2 text-xs font-medium text-gray-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
+                                📄 Factures
+                            </a>
+                            <a href="{{ route('client.exports.clients') }}"
+                                class="flex items-center px-4 py-2 text-xs font-medium text-gray-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
+                                👥 Clients
+                            </a>
+                            <a href="{{ route('client.exports.products') }}"
+                                class="flex items-center px-4 py-2 text-xs font-medium text-gray-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
+                                📦 Produits
+                            </a>
+                            <a href="{{ route('client.exports.payments') }}"
+                                class="flex items-center px-4 py-2 text-xs font-medium text-gray-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
+                                💰 Paiements
+                            </a>
+                        </div>
+                    </div>
                 @endif
 
                 <a href="{{ route('client.profile.edit') }}"
@@ -149,10 +207,32 @@
                             d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
                     </svg>
                     Modèles
+                    @if ($isPro)
+                        <span class="ml-auto px-2 py-0.5 text-xs bg-indigo-100 text-indigo-700 rounded-full">Pro</span>
+                    @endif
                 </a>
 
+                <!-- Sécurité 2FA (Pro+) -->
+                @if ($isPro)
+                    <a href="{{ route('client.two-factor.enable') }}"
+                        class="{{ request()->routeIs('client.two-factor*') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50' }} flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                        Sécurité 2FA
+                        @if (auth()->user()->two_factor_secret)
+                            <span
+                                class="ml-auto px-2 py-0.5 text-xs bg-green-100 text-green-700 rounded-full">Activé</span>
+                        @else
+                            <span
+                                class="ml-auto px-2 py-0.5 text-xs bg-indigo-100 text-indigo-700 rounded-full">Pro</span>
+                        @endif
+                    </a>
+                @endif
+
                 <!-- Équipe (Enterprise only) -->
-                @if ($userPlan === 'enterprise')
+                @if ($isEnterprise)
                     <a href="{{ route('client.team.index') }}"
                         class="{{ request()->routeIs('client.team*') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50' }} flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,7 +246,7 @@
                 @endif
 
                 <!-- API Keys (Enterprise only) -->
-                @if ($userPlan === 'enterprise')
+                @if ($isEnterprise)
                     <a href="{{ route('client.api-keys.index') }}"
                         class="{{ request()->routeIs('client.api-keys*') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50' }} flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -191,6 +271,37 @@
                         Paramètres
                     </a>
                 </div>
+
+                <!-- Plan Badge -->
+                @if ($isPro)
+                    <div
+                        class="mx-2 mt-4 p-3 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border border-indigo-100">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-lg">⭐</span>
+                            <span class="text-sm font-bold text-indigo-700">Plan {{ ucfirst($userPlan) }}</span>
+                        </div>
+                        <p class="text-xs text-indigo-600/70">Accès aux fonctionnalités avancées</p>
+                        @if (!$isEnterprise)
+                            <a href="{{ route('client.billing') }}"
+                                class="mt-2 flex items-center text-xs text-indigo-600 hover:text-indigo-800 font-medium">
+                                Passer à Enterprise →
+                            </a>
+                        @endif
+                    </div>
+                @else
+                    <div
+                        class="mx-2 mt-4 p-3 bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl border border-gray-200">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-lg">🆓</span>
+                            <span class="text-sm font-bold text-gray-700">Plan Starter</span>
+                        </div>
+                        <p class="text-xs text-gray-500">Fonctionnalités limitées</p>
+                        <a href="{{ route('client.billing') }}"
+                            class="mt-2 flex items-center text-xs text-indigo-600 hover:text-indigo-800 font-medium">
+                            Débloquer le plan Pro →
+                        </a>
+                    </div>
+                @endif
             </nav>
 
             <!-- User Profile -->
@@ -229,7 +340,8 @@
             <header class="sticky top-0 z-40 bg-white border-b border-gray-200">
                 <div class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
                     <!-- Mobile menu button -->
-                    <button @click="open = !open" class="lg:hidden p-2 text-gray-600 hover:text-gray-900">
+                    <button @click="sidebarOpen = !sidebarOpen"
+                        class="lg:hidden p-2 text-gray-600 hover:text-gray-900">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 6h16M4 12h16M4 18h16" />
@@ -243,7 +355,6 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                             </svg>
-                            <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                         </button>
                     </div>
                 </div>

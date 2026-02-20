@@ -72,6 +72,7 @@ class ProductController extends Controller
         $validated['user_id'] = auth()->id();
         $validated['tenant_id'] = auth()->user()->tenant_id;
         $validated['is_active'] = $request->boolean('is_active', true);
+        $validated['unit_price'] = $validated['price'];
         
         $product = Product::create($validated);
 
@@ -126,6 +127,7 @@ class ProductController extends Controller
         ]);
 
         $validated['is_active'] = $request->boolean('is_active', true);
+        $validated['unit_price'] = $validated['price'];
         
         $product->update($validated);
 

@@ -21,7 +21,8 @@ class ExportController extends Controller
      */
     public function clients(Request $request): StreamedResponse
     {
-        $query = Client::query()
+        $user = auth()->user();
+        $query = Client::where('tenant_id', $user->tenant_id)
             ->with('invoices')
             ->orderBy('name');
 
@@ -63,7 +64,8 @@ class ExportController extends Controller
      */
     public function invoices(Request $request): StreamedResponse
     {
-        $query = Invoice::query()
+        $user = auth()->user();
+        $query = Invoice::where('tenant_id', $user->tenant_id)
             ->with(['client', 'items'])
             ->orderByDesc('created_at');
 
@@ -127,7 +129,9 @@ class ExportController extends Controller
      */
     public function products(Request $request): StreamedResponse
     {
-        $query = Product::query()->orderBy('name');
+        $user = auth()->user();
+        $query = Product::where('tenant_id', $user->tenant_id)
+            ->orderBy('name');
 
         if ($request->filled('is_active')) {
             $query->where('is_active', $request->boolean('is_active'));
@@ -165,7 +169,8 @@ class ExportController extends Controller
      */
     public function payments(Request $request): StreamedResponse
     {
-        $query = Payment::query()
+        $user = auth()->user();
+        $query = Payment::where('tenant_id', $user->tenant_id)
             ->with(['invoice.client'])
             ->orderByDesc('created_at');
 
