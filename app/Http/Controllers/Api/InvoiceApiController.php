@@ -21,7 +21,34 @@ class InvoiceApiController extends Controller
     }
 
     /**
-     * Display a listing of invoices.
+     * @OA\Get(
+     *     path="/v1/invoices",
+     *     summary="Lister les factures du tenant",
+     *     tags={"Invoices"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(name="page", in="query", description="Numéro de page", @OA\Schema(type="integer", example=1)),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Liste paginée des factures",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="array", @OA\Items(
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="number", type="string", example="INV-2025-0001"),
+     *                 @OA\Property(property="status", type="string", example="draft"),
+     *                 @OA\Property(property="total", type="number", format="float", example=150000),
+     *                 @OA\Property(property="due_date", type="string", format="date", example="2025-08-01"),
+     *                 @OA\Property(property="client", type="object",
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="name", type="string", example="Entreprise ABC")
+     *                 )
+     *             )),
+     *             @OA\Property(property="current_page", type="integer", example=1),
+     *             @OA\Property(property="last_page", type="integer", example=3),
+     *             @OA\Property(property="total", type="integer", example=42)
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Non authentifié")
+     * )
      */
     public function index(Request $request)
     {
@@ -34,7 +61,50 @@ class InvoiceApiController extends Controller
     }
 
     /**
-     * Store a newly created invoice.
+     * @OA\Post(
+     *     path="/v1/invoices",
+     *     summary="Créer une nouvelle facture",
+     *     tags={"Invoices"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"client_id","due_date","items"},
+     *             @OA\Property(property="client_id", type="integer", example=1),
+     *             @OA\Property(property="due_date", type="string", format="date", example="2025-08-01"),
+     *             @OA\Property(property="tax_rate", type="number", example=18),
+     *             @OA\Property(property="discount", type="number", example=5000),
+     *             @OA\Property(property="notes", type="string", example="Merci pour votre confiance"),
+     *             @OA\Property(property="items", type="array", @OA\Items(
+     *                 required={"description","quantity","unit_price"},
+     *                 @OA\Property(property="description", type="string", example="Développement site web"),
+     *                 @OA\Property(property="quantity", type="number", example=1),
+     *                 @OA\Property(property="unit_price", type="number", example=500000),
+     *                 @OA\Property(property="product_id", type="integer", example=null, nullable=true)
+     *             ))
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Facture créée",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="invoice", type="object",
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="invoice_number", type="string", example="INV-2025-0001"),
+     *                     @OA\Property(property="subtotal", type="number", example=500000),
+     *                     @OA\Property(property="tax_amount", type="number", example=90000),
+     *                     @OA\Property(property="total_amount", type="number", example=585000),
+     *                     @OA\Property(property="status", type="string", example="draft")
+     *                 )
+     *             ),
+     *             @OA\Property(property="message", type="string", example="Invoice created successfully")
+     *         )
+     *     ),
+     *     @OA\Response(response=422, description="Erreur de validation"),
+     *     @OA\Response(response=401, description="Non authentifié")
+     * )
      */
     public function store(Request $request)
     {
@@ -129,7 +199,36 @@ class InvoiceApiController extends Controller
     }
 
     /**
-     * Display the specified invoice.
+     * @OA\Get(
+     *     path="/v1/invoices/{id}",
+     *     summary="Afficher une facture",
+     *     tags={"Invoices"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la facture",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Détails de la facture avec client et items",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="id", type="integer", example=1),
+     *             @OA\Property(property="number", type="string", example="INV-2025-0001"),
+     *             @OA\Property(property="status", type="string", example="draft"),
+     *             @OA\Property(property="subtotal", type="number", example=500000),
+     *             @OA\Property(property="tax", type="number", example=90000),
+     *             @OA\Property(property="total", type="number", example=585000),
+     *             @OA\Property(property="due_date", type="string", format="date"),
+     *             @OA\Property(property="client", type="object"),
+     *             @OA\Property(property="items", type="array", @OA\Items(type="object"))
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Facture non trouvée"),
+     *     @OA\Response(response=401, description="Non authentifié")
+     * )
      */
     public function show(Request $request, $id)
     {
@@ -141,7 +240,38 @@ class InvoiceApiController extends Controller
     }
 
     /**
-     * Update the specified invoice.
+     * @OA\Put(
+     *     path="/v1/invoices/{id}",
+     *     summary="Mettre à jour une facture",
+     *     tags={"Invoices"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la facture",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             @OA\Property(property="client_id", type="integer", example=2),
+     *             @OA\Property(property="due_date", type="string", format="date", example="2025-09-01"),
+     *             @OA\Property(property="status", type="string", enum={"draft","sent","viewed","partially_paid","paid","overdue"}, example="sent"),
+     *             @OA\Property(property="notes", type="string", example="Mise à jour des conditions")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Facture mise à jour",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Invoice updated successfully"),
+     *             @OA\Property(property="invoice", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Facture non trouvée"),
+     *     @OA\Response(response=422, description="Erreur de validation"),
+     *     @OA\Response(response=401, description="Non authentifié")
+     * )
      */
     public function update(Request $request, $id)
     {
@@ -173,7 +303,28 @@ class InvoiceApiController extends Controller
     }
 
     /**
-     * Remove the specified invoice.
+     * @OA\Delete(
+     *     path="/v1/invoices/{id}",
+     *     summary="Supprimer une facture",
+     *     tags={"Invoices"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la facture",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Facture supprimée",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Invoice deleted successfully")
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Facture non trouvée"),
+     *     @OA\Response(response=401, description="Non authentifié")
+     * )
      */
     public function destroy(Request $request, $id)
     {
@@ -188,7 +339,32 @@ class InvoiceApiController extends Controller
     }
 
     /**
-     * Generate PDF for the invoice.
+     * @OA\Post(
+     *     path="/v1/invoices/{id}/pdf",
+     *     summary="Générer le PDF d'une facture",
+     *     tags={"Invoices"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la facture",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="PDF généré",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="pdf_path", type="string", example="invoices/invoice-INV-2025-0001.pdf")
+     *             ),
+     *             @OA\Property(property="message", type="string", example="PDF generated successfully")
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Facture non trouvée"),
+     *     @OA\Response(response=401, description="Non authentifié")
+     * )
      */
     public function generatePdf(Request $request, $id)
     {
@@ -211,7 +387,40 @@ class InvoiceApiController extends Controller
     }
 
     /**
-     * Download PDF for the invoice.
+     * @OA\Get(
+     *     path="/v1/invoices/{id}/download",
+     *     summary="Télécharger le PDF d'une facture",
+     *     tags={"Invoices"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la facture",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="URL de téléchargement du PDF",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="pdf_path", type="string", example="invoices/invoice-INV-2025-0001.pdf"),
+     *                 @OA\Property(property="download_url", type="string", example="http://localhost:8000/storage/invoices/invoice-INV-2025-0001.pdf")
+     *             ),
+     *             @OA\Property(property="message", type="string", example="PDF ready for download")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="PDF non encore généré",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="PDF not generated yet")
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Non authentifié")
+     * )
      */
     public function downloadPdf(Request $request, $id)
     {

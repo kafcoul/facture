@@ -17,9 +17,21 @@ use Illuminate\Support\Facades\Storage;
 class HealthCheckController extends Controller
 {
     /**
-     * Basic health check endpoint
-     * 
-     * Quick check that returns OK if the application is running
+     * @OA\Get(
+     *     path="/health",
+     *     summary="Vérification de santé basique",
+     *     description="Retourne OK si l'application tourne",
+     *     tags={"Health"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Application en ligne",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="ok"),
+     *             @OA\Property(property="timestamp", type="string", format="date-time"),
+     *             @OA\Property(property="version", type="string", example="1.0.0")
+     *         )
+     *     )
+     * )
      */
     public function index(): JsonResponse
     {
@@ -31,9 +43,43 @@ class HealthCheckController extends Controller
     }
 
     /**
-     * Detailed health check with all system components
-     * 
-     * Checks database, cache, storage, queue, and more
+     * @OA\Get(
+     *     path="/health/detailed",
+     *     summary="Vérification de santé détaillée",
+     *     description="Vérifie base de données, cache, storage et queue",
+     *     tags={"Health"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Tous les composants sont sains",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="healthy"),
+     *             @OA\Property(property="timestamp", type="string", format="date-time"),
+     *             @OA\Property(property="version", type="string", example="1.0.0"),
+     *             @OA\Property(property="environment", type="string", example="production"),
+     *             @OA\Property(property="checks", type="object",
+     *                 @OA\Property(property="database", type="object",
+     *                     @OA\Property(property="status", type="string", example="healthy"),
+     *                     @OA\Property(property="response_time_ms", type="number", example=1.5)
+     *                 ),
+     *                 @OA\Property(property="cache", type="object",
+     *                     @OA\Property(property="status", type="string", example="healthy")
+     *                 ),
+     *                 @OA\Property(property="storage", type="object",
+     *                     @OA\Property(property="status", type="string", example="healthy")
+     *                 ),
+     *                 @OA\Property(property="queue", type="object",
+     *                     @OA\Property(property="status", type="string", example="healthy")
+     *                 )
+     *             ),
+     *             @OA\Property(property="metrics", type="object",
+     *                 @OA\Property(property="execution_time_ms", type="number", example=12.5),
+     *                 @OA\Property(property="memory_usage_mb", type="number", example=32.5),
+     *                 @OA\Property(property="memory_peak_mb", type="number", example=40.2)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=503, description="Un ou plusieurs composants sont en erreur")
+     * )
      */
     public function detailed(): JsonResponse
     {
@@ -65,7 +111,34 @@ class HealthCheckController extends Controller
     }
 
     /**
-     * System metrics endpoint for monitoring dashboards
+     * @OA\Get(
+     *     path="/metrics",
+     *     summary="Métriques système pour tableaux de bord de monitoring",
+     *     tags={"Health"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Métriques système complètes",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="timestamp", type="string", format="date-time"),
+     *             @OA\Property(property="system", type="object",
+     *                 @OA\Property(property="php_version", type="string", example="8.4.17"),
+     *                 @OA\Property(property="laravel_version", type="string", example="10.48.25")
+     *             ),
+     *             @OA\Property(property="memory", type="object",
+     *                 @OA\Property(property="current_mb", type="number", example=32.5),
+     *                 @OA\Property(property="peak_mb", type="number", example=40.2),
+     *                 @OA\Property(property="limit", type="string", example="256M")
+     *             ),
+     *             @OA\Property(property="database", type="object"),
+     *             @OA\Property(property="cache", type="object"),
+     *             @OA\Property(property="queue", type="object",
+     *                 @OA\Property(property="driver", type="string", example="database"),
+     *                 @OA\Property(property="failed_jobs", type="integer", example=0)
+     *             ),
+     *             @OA\Property(property="storage", type="object")
+     *         )
+     *     )
+     * )
      */
     public function metrics(): JsonResponse
     {
@@ -101,7 +174,22 @@ class HealthCheckController extends Controller
     }
 
     /**
-     * Readiness probe for Kubernetes/container orchestration
+     * @OA\Get(
+     *     path="/health/ready",
+     *     summary="Sonde de disponibilité (readiness probe)",
+     *     description="Pour Kubernetes/orchestration de conteneurs : vérifie que l'application est prête à recevoir du trafic",
+     *     tags={"Health"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Prêt",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="ready", type="boolean", example=true),
+     *             @OA\Property(property="timestamp", type="string", format="date-time"),
+     *             @OA\Property(property="reasons", type="array", @OA\Items(type="string"))
+     *         )
+     *     ),
+     *     @OA\Response(response=503, description="Non prêt — raisons fournies dans le body")
+     * )
      */
     public function ready(): JsonResponse
     {
@@ -127,7 +215,20 @@ class HealthCheckController extends Controller
     }
 
     /**
-     * Liveness probe for Kubernetes/container orchestration
+     * @OA\Get(
+     *     path="/health/alive",
+     *     summary="Sonde de vivacité (liveness probe)",
+     *     description="Pour Kubernetes/orchestration de conteneurs : l'application est en cours d'exécution",
+     *     tags={"Health"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Vivant",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="alive", type="boolean", example=true),
+     *             @OA\Property(property="timestamp", type="string", format="date-time")
+     *         )
+     *     )
+     * )
      */
     public function alive(): JsonResponse
     {

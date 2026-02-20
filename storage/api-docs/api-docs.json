@@ -1,0 +1,1730 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Invoice SaaS API",
+        "description": "API REST pour la plateforme de facturation multi-tenant Invoice SaaS. Authentification via Laravel Sanctum (Bearer Token).",
+        "contact": {
+            "name": "Invoice SaaS Support",
+            "email": "support@invoice-saas.com"
+        },
+        "license": {
+            "name": "Propriétaire",
+            "url": "https://invoice-saas.com/terms"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/api",
+            "description": "Serveur API principal"
+        }
+    ],
+    "paths": {
+        "/v1/auth/register": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Créer un nouveau compte utilisateur",
+                "operationId": "0f7820aec3266d94b412543a433ca21e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation",
+                                    "tenant_id"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "minLength": 8,
+                                        "example": "password123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    },
+                                    "tenant_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "device_name": {
+                                        "type": "string",
+                                        "example": "iPhone 14"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Compte créé avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Compte créé avec succès"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "user": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "John Doe"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "example": "john@example.com"
+                                                        },
+                                                        "tenant_id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "1|abc123..."
+                                                },
+                                                "token_type": {
+                                                    "type": "string",
+                                                    "example": "Bearer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erreur de validation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Les données fournies sont invalides."
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Authentification et génération de token",
+                "operationId": "da7de2dd1215d891341d8a66e79d5e55",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password"
+                                    },
+                                    "device_name": {
+                                        "type": "string",
+                                        "example": "iPhone 14"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Authentification réussie",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Authentification réussie"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "user": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "John Doe"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "example": "john@example.com"
+                                                        },
+                                                        "tenant_id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "1|abc123..."
+                                                },
+                                                "token_type": {
+                                                    "type": "string",
+                                                    "example": "Bearer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Identifiants incorrects"
+                    }
+                }
+            }
+        },
+        "/v1/auth/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Déconnexion (révoque le token actuel)",
+                "operationId": "fcb876bd799cd2c35228d4846ad93679",
+                "responses": {
+                    "200": {
+                        "description": "Déconnexion réussie",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Déconnexion réussie"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non authentifié"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/v1/auth/logout-all": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Déconnexion de tous les appareils (révoque tous les tokens)",
+                "operationId": "8c5e1afe4b7be9e333801c1ea82b686c",
+                "responses": {
+                    "200": {
+                        "description": "Tous les tokens révoqués",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Déconnexion de tous les appareils réussie"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non authentifié"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/v1/auth/me": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Informations de l'utilisateur authentifié",
+                "operationId": "941668a6340f490e3a4b13121de6fb2b",
+                "responses": {
+                    "200": {
+                        "description": "Informations utilisateur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "john@example.com"
+                                                },
+                                                "tenant": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Demo Company"
+                                                        },
+                                                        "slug": {
+                                                            "type": "string",
+                                                            "example": "demo"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non authentifié"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/v1/auth/refresh": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Rafraîchir le token (révoque l'ancien, crée un nouveau)",
+                "operationId": "8b6be5b3ac1ea18bceae26ad9e98a478",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "device_name": {
+                                        "type": "string",
+                                        "example": "iPhone 14"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Token rafraîchi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Token rafraîchi"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "2|xyz789..."
+                                                },
+                                                "token_type": {
+                                                    "type": "string",
+                                                    "example": "Bearer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non authentifié"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/v1/auth/tokens": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Liste tous les tokens de l'utilisateur",
+                "operationId": "575f0a52465f4c227f0a4d40f3551f13",
+                "responses": {
+                    "200": {
+                        "description": "Liste des tokens",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "iPhone 14"
+                                                    },
+                                                    "last_used_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "expires_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "nullable": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non authentifié"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/v1/auth/tokens/{id}": {
+            "delete": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Révoquer un token spécifique",
+                "operationId": "fd3f52769c936b8f5963bfa9ff0b7ca9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID du token à révoquer",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Token révoqué",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Token révoqué avec succès"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Token non trouvé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Token non trouvé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non authentifié"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/health": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Vérification de santé basique",
+                "description": "Retourne OK si l'application tourne",
+                "operationId": "3167d96e5433d58abb0862c01ee8e503",
+                "responses": {
+                    "200": {
+                        "description": "Application en ligne",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        },
+                                        "timestamp": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "version": {
+                                            "type": "string",
+                                            "example": "1.0.0"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/health/detailed": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Vérification de santé détaillée",
+                "description": "Vérifie base de données, cache, storage et queue",
+                "operationId": "076673001f959f2a100b075e8721ebf4",
+                "responses": {
+                    "200": {
+                        "description": "Tous les composants sont sains",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "healthy"
+                                        },
+                                        "timestamp": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "version": {
+                                            "type": "string",
+                                            "example": "1.0.0"
+                                        },
+                                        "environment": {
+                                            "type": "string",
+                                            "example": "production"
+                                        },
+                                        "checks": {
+                                            "properties": {
+                                                "database": {
+                                                    "properties": {
+                                                        "status": {
+                                                            "type": "string",
+                                                            "example": "healthy"
+                                                        },
+                                                        "response_time_ms": {
+                                                            "type": "number",
+                                                            "example": 1.5
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "cache": {
+                                                    "properties": {
+                                                        "status": {
+                                                            "type": "string",
+                                                            "example": "healthy"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "storage": {
+                                                    "properties": {
+                                                        "status": {
+                                                            "type": "string",
+                                                            "example": "healthy"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "queue": {
+                                                    "properties": {
+                                                        "status": {
+                                                            "type": "string",
+                                                            "example": "healthy"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "metrics": {
+                                            "properties": {
+                                                "execution_time_ms": {
+                                                    "type": "number",
+                                                    "example": 12.5
+                                                },
+                                                "memory_usage_mb": {
+                                                    "type": "number",
+                                                    "example": 32.5
+                                                },
+                                                "memory_peak_mb": {
+                                                    "type": "number",
+                                                    "example": 40.2
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Un ou plusieurs composants sont en erreur"
+                    }
+                }
+            }
+        },
+        "/metrics": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Métriques système pour tableaux de bord de monitoring",
+                "operationId": "8121f646e94d5d429009379452af8a04",
+                "responses": {
+                    "200": {
+                        "description": "Métriques système complètes",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "timestamp": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "system": {
+                                            "properties": {
+                                                "php_version": {
+                                                    "type": "string",
+                                                    "example": "8.4.17"
+                                                },
+                                                "laravel_version": {
+                                                    "type": "string",
+                                                    "example": "10.48.25"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "memory": {
+                                            "properties": {
+                                                "current_mb": {
+                                                    "type": "number",
+                                                    "example": 32.5
+                                                },
+                                                "peak_mb": {
+                                                    "type": "number",
+                                                    "example": 40.2
+                                                },
+                                                "limit": {
+                                                    "type": "string",
+                                                    "example": "256M"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "database": {
+                                            "type": "object"
+                                        },
+                                        "cache": {
+                                            "type": "object"
+                                        },
+                                        "queue": {
+                                            "properties": {
+                                                "driver": {
+                                                    "type": "string",
+                                                    "example": "database"
+                                                },
+                                                "failed_jobs": {
+                                                    "type": "integer",
+                                                    "example": 0
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "storage": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/health/ready": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Sonde de disponibilité (readiness probe)",
+                "description": "Pour Kubernetes/orchestration de conteneurs : vérifie que l'application est prête à recevoir du trafic",
+                "operationId": "1ff66b7b2d23e048d8f4b88ae959482b",
+                "responses": {
+                    "200": {
+                        "description": "Prêt",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "ready": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "timestamp": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "reasons": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Non prêt — raisons fournies dans le body"
+                    }
+                }
+            }
+        },
+        "/health/alive": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Sonde de vivacité (liveness probe)",
+                "description": "Pour Kubernetes/orchestration de conteneurs : l'application est en cours d'exécution",
+                "operationId": "85752f6452760b755ad6a307b266f3a2",
+                "responses": {
+                    "200": {
+                        "description": "Vivant",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "alive": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "timestamp": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/invoices": {
+            "get": {
+                "tags": [
+                    "Invoices"
+                ],
+                "summary": "Lister les factures du tenant",
+                "operationId": "34812f7b0de40014dc5498bb799b0926",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Numéro de page",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste paginée des factures",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "number": {
+                                                        "type": "string",
+                                                        "example": "INV-2025-0001"
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "example": "draft"
+                                                    },
+                                                    "total": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 150000
+                                                    },
+                                                    "due_date": {
+                                                        "type": "string",
+                                                        "format": "date",
+                                                        "example": "2025-08-01"
+                                                    },
+                                                    "client": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Entreprise ABC"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "current_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "example": 3
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 42
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non authentifié"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Invoices"
+                ],
+                "summary": "Créer une nouvelle facture",
+                "operationId": "5961d44f3841d4d1b03c2592b5c2bd92",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "client_id",
+                                    "due_date",
+                                    "items"
+                                ],
+                                "properties": {
+                                    "client_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "due_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-08-01"
+                                    },
+                                    "tax_rate": {
+                                        "type": "number",
+                                        "example": 18
+                                    },
+                                    "discount": {
+                                        "type": "number",
+                                        "example": 5000
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "example": "Merci pour votre confiance"
+                                    },
+                                    "items": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "description",
+                                                "quantity",
+                                                "unit_price"
+                                            ],
+                                            "properties": {
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Développement site web"
+                                                },
+                                                "quantity": {
+                                                    "type": "number",
+                                                    "example": 1
+                                                },
+                                                "unit_price": {
+                                                    "type": "number",
+                                                    "example": 500000
+                                                },
+                                                "product_id": {
+                                                    "type": "integer",
+                                                    "example": null,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Facture créée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "invoice": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "invoice_number": {
+                                                            "type": "string",
+                                                            "example": "INV-2025-0001"
+                                                        },
+                                                        "subtotal": {
+                                                            "type": "number",
+                                                            "example": 500000
+                                                        },
+                                                        "tax_amount": {
+                                                            "type": "number",
+                                                            "example": 90000
+                                                        },
+                                                        "total_amount": {
+                                                            "type": "number",
+                                                            "example": 585000
+                                                        },
+                                                        "status": {
+                                                            "type": "string",
+                                                            "example": "draft"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invoice created successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erreur de validation"
+                    },
+                    "401": {
+                        "description": "Non authentifié"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/v1/invoices/{id}": {
+            "get": {
+                "tags": [
+                    "Invoices"
+                ],
+                "summary": "Afficher une facture",
+                "operationId": "d1db505615d55efcff88ee0cd057e2be",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la facture",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Détails de la facture avec client et items",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "number": {
+                                            "type": "string",
+                                            "example": "INV-2025-0001"
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "draft"
+                                        },
+                                        "subtotal": {
+                                            "type": "number",
+                                            "example": 500000
+                                        },
+                                        "tax": {
+                                            "type": "number",
+                                            "example": 90000
+                                        },
+                                        "total": {
+                                            "type": "number",
+                                            "example": 585000
+                                        },
+                                        "due_date": {
+                                            "type": "string",
+                                            "format": "date"
+                                        },
+                                        "client": {
+                                            "type": "object"
+                                        },
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Facture non trouvée"
+                    },
+                    "401": {
+                        "description": "Non authentifié"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Invoices"
+                ],
+                "summary": "Mettre à jour une facture",
+                "operationId": "3f5d8a391b679b4156bd1c7f9f9b1bf2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la facture",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "client_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "due_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-09-01"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "draft",
+                                            "sent",
+                                            "viewed",
+                                            "partially_paid",
+                                            "paid",
+                                            "overdue"
+                                        ],
+                                        "example": "sent"
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "example": "Mise à jour des conditions"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Facture mise à jour",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invoice updated successfully"
+                                        },
+                                        "invoice": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Facture non trouvée"
+                    },
+                    "422": {
+                        "description": "Erreur de validation"
+                    },
+                    "401": {
+                        "description": "Non authentifié"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Invoices"
+                ],
+                "summary": "Supprimer une facture",
+                "operationId": "309e38a585791fb99c28a94f6a7f6e49",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la facture",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Facture supprimée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invoice deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Facture non trouvée"
+                    },
+                    "401": {
+                        "description": "Non authentifié"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/v1/invoices/{id}/pdf": {
+            "post": {
+                "tags": [
+                    "Invoices"
+                ],
+                "summary": "Générer le PDF d'une facture",
+                "operationId": "b513c7beb4f7d58539fe3498d4198b95",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la facture",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "PDF généré",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "pdf_path": {
+                                                    "type": "string",
+                                                    "example": "invoices/invoice-INV-2025-0001.pdf"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "PDF generated successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Facture non trouvée"
+                    },
+                    "401": {
+                        "description": "Non authentifié"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/v1/invoices/{id}/download": {
+            "get": {
+                "tags": [
+                    "Invoices"
+                ],
+                "summary": "Télécharger le PDF d'une facture",
+                "operationId": "4fa96906f642c63fc8179199652bb6b9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la facture",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "URL de téléchargement du PDF",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "pdf_path": {
+                                                    "type": "string",
+                                                    "example": "invoices/invoice-INV-2025-0001.pdf"
+                                                },
+                                                "download_url": {
+                                                    "type": "string",
+                                                    "example": "http://localhost:8000/storage/invoices/invoice-INV-2025-0001.pdf"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "PDF ready for download"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "PDF non encore généré",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "PDF not generated yet"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non authentifié"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/v1/payments": {
+            "post": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Initier un paiement pour une facture",
+                "operationId": "c634c6fd47efbad2e7bc0511a70e514e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "invoice_id",
+                                    "amount",
+                                    "gateway",
+                                    "currency",
+                                    "return_url"
+                                ],
+                                "properties": {
+                                    "invoice_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "amount": {
+                                        "type": "number",
+                                        "example": 150000
+                                    },
+                                    "gateway": {
+                                        "type": "string",
+                                        "enum": [
+                                            "stripe",
+                                            "paypal",
+                                            "wave",
+                                            "orange_money",
+                                            "mtn_momo"
+                                        ],
+                                        "example": "orange_money"
+                                    },
+                                    "currency": {
+                                        "type": "string",
+                                        "enum": [
+                                            "XOF",
+                                            "USD",
+                                            "EUR"
+                                        ],
+                                        "example": "XOF"
+                                    },
+                                    "payment_method": {
+                                        "type": "string",
+                                        "example": "mobile_money",
+                                        "nullable": true
+                                    },
+                                    "return_url": {
+                                        "type": "string",
+                                        "format": "url",
+                                        "example": "https://invoice-saas.com/payment/callback"
+                                    },
+                                    "metadata": {
+                                        "type": "object",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Paiement initié — redirigez vers redirect_url",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Payment initiated successfully"
+                                        },
+                                        "redirect_url": {
+                                            "type": "string",
+                                            "example": "https://pay.orange.ci/checkout/abc123"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "amount": {
+                                                    "type": "number",
+                                                    "example": 150000
+                                                },
+                                                "gateway": {
+                                                    "type": "string",
+                                                    "example": "orange_money"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "pending"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erreur de validation"
+                    },
+                    "500": {
+                        "description": "Erreur lors du traitement du paiement"
+                    },
+                    "401": {
+                        "description": "Non authentifié"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/v1/payments/{id}/confirm": {
+            "post": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Confirmer un paiement (callback depuis la passerelle)",
+                "operationId": "05c8757d022cdf0156d6870808b0ce83",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID du paiement",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "description": "Données de confirmation renvoyées par la passerelle",
+                                "properties": {
+                                    "transaction_id": {
+                                        "type": "string",
+                                        "example": "txn_abc123"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "completed"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Paiement confirmé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Payment confirmed successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "amount": {
+                                                    "type": "number",
+                                                    "example": 150000
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "completed"
+                                                },
+                                                "invoice": {
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Échec de la confirmation"
+                    },
+                    "401": {
+                        "description": "Non authentifié"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "sanctum": {
+                "type": "http",
+                "description": "Laravel Sanctum token authentication",
+                "name": "Authorization",
+                "in": "header",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Health",
+            "description": "Endpoints de monitoring et vérification de santé"
+        },
+        {
+            "name": "Authentication",
+            "description": "Inscription, connexion, gestion de tokens Sanctum"
+        },
+        {
+            "name": "Invoices",
+            "description": "Création, consultation et génération PDF de factures"
+        },
+        {
+            "name": "Payments",
+            "description": "Initiation et confirmation de paiements (Orange Money, MTN, Stripe…)"
+        }
+    ],
+    "security": [
+        {
+            "sanctum": []
+        }
+    ]
+}

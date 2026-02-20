@@ -220,9 +220,20 @@ class AuthController extends Controller
     }
 
     /**
-     * Logout de tous les appareils
-     * 
-     * POST /api/v1/auth/logout-all
+     * @OA\Post(
+     *     path="/v1/auth/logout-all",
+     *     summary="Déconnexion de tous les appareils (révoque tous les tokens)",
+     *     tags={"Authentication"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Tous les tokens révoqués",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Déconnexion de tous les appareils réussie")
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Non authentifié")
+     * )
      */
     public function logoutAll(Request $request): JsonResponse
     {
@@ -277,9 +288,29 @@ class AuthController extends Controller
     }
 
     /**
-     * Refresh token (créer un nouveau token et révoquer l'ancien)
-     * 
-     * POST /api/v1/auth/refresh
+     * @OA\Post(
+     *     path="/v1/auth/refresh",
+     *     summary="Rafraîchir le token (révoque l'ancien, crée un nouveau)",
+     *     tags={"Authentication"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             @OA\Property(property="device_name", type="string", example="iPhone 14")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Token rafraîchi",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Token rafraîchi"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="token", type="string", example="2|xyz789..."),
+     *                 @OA\Property(property="token_type", type="string", example="Bearer")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Non authentifié")
+     * )
      */
     public function refresh(Request $request): JsonResponse
     {
@@ -344,9 +375,36 @@ class AuthController extends Controller
     }
 
     /**
-     * Révoquer un token spécifique
-     * 
-     * DELETE /api/v1/auth/tokens/{id}
+     * @OA\Delete(
+     *     path="/v1/auth/tokens/{id}",
+     *     summary="Révoquer un token spécifique",
+     *     tags={"Authentication"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID du token à révoquer",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Token révoqué",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Token révoqué avec succès")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Token non trouvé",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Token non trouvé")
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Non authentifié")
+     * )
      */
     public function revokeToken(Request $request, int $id): JsonResponse
     {
